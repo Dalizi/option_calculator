@@ -1,12 +1,20 @@
 #ifndef DATABASEACCESS_H
 #define DATABASEACCESS_H
 
+#include <QObject>
+#include <QSqlDatabase>
+#include <QString>
+#include <QSqlError>
 
-class databaseAccess : public QObject
+class DatabaseAccess : public QObject
 {
     Q_OBJECT
+    QSqlDatabase db;
 public:
-    explicit databaseAccess(QObject *parent = 0);
+    explicit DatabaseAccess(QObject *parent = 0);
+    void setLoginInfo(const QString &user_name, const QString &password);
+    bool connectToDatabase() {return db.open();}
+    QString lastError() const {return db.lastError().text();}
 
 signals:
 
