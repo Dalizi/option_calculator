@@ -16,11 +16,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     databaseaccess.cpp \
-    logindialog.cpp
+    logindialog.cpp \
+    addorderdialog.cpp
 
 HEADERS  += mainwindow.h \
     databaseaccess.h \
-    logindialog.h
+    logindialog.h \
+    addorderdialog.h
 
 FORMS    += mainwindow.ui \
-    logindialog.ui
+    logindialog.ui \
+    addorderdialog.ui
+
+RESOURCES += \
+    multi_language.qrc

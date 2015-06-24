@@ -10,8 +10,13 @@
     <height>149</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>WenQuanYi Micro Hei</family>
+   </font>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>用户登录</string>
   </property>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
@@ -35,14 +40,29 @@
      <x>19</x>
      <y>10</y>
      <width>361</width>
-     <height>80</height>
+     <height>81</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
     <item row="0" column="0">
      <widget class="QLabel" name="userNameLabel">
+      <property name="font">
+       <font>
+        <family>WenQuanYi Micro Hei</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 10pt &quot;WenQuanYi Micro Hei&quot;;</string>
+      </property>
       <property name="text">
-       <string>用户名</string>
+       <string>用户名：</string>
+      </property>
+      <property name="textFormat">
+       <enum>Qt::AutoText</enum>
       </property>
      </widget>
     </item>
@@ -51,13 +71,36 @@
     </item>
     <item row="1" column="0">
      <widget class="QLabel" name="passwordLabel">
+      <property name="font">
+       <font>
+        <family>WenQuanYi Micro Hei</family>
+        <pointsize>10</pointsize>
+        <weight>50</weight>
+        <italic>false</italic>
+        <bold>false</bold>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 10pt &quot;WenQuanYi Micro Hei&quot;;</string>
+      </property>
       <property name="text">
-       <string>密码</string>
+       <string comment="测试">密码：</string>
+      </property>
+      <property name="scaledContents">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
     <item row="1" column="1">
      <widget class="QLineEdit" name="passwordLineEdit">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="locale">
+       <locale language="Chinese" country="China"/>
+      </property>
       <property name="inputMask">
        <string/>
       </property>

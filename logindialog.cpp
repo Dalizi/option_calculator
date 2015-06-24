@@ -17,10 +17,10 @@ LoginDialog::~LoginDialog()
 }
 
 void LoginDialog::accept() {
-    bool is_success = db->connectToDatabase();
     auto username = ui->userNameLineEdit->text();
     auto password = ui->passwordLineEdit->text();
     db->setLoginInfo(username, password);
+    bool is_success = db->connectToDatabase();
     if (is_success)
         QDialog::accept();
     else {

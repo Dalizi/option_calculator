@@ -15,6 +15,7 @@ public:
     void setLoginInfo(const QString &user_name, const QString &password);
     bool connectToDatabase() {return db.open();}
     QString lastError() const {return db.lastError().text();}
+    QSqlDatabase& getDatabase() {return db;}
 
 signals:
 
