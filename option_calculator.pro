@@ -17,16 +17,21 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     databaseaccess.cpp \
     logindialog.cpp \
-    addorderdialog.cpp
+    addorderdialog.cpp \
+    tradetypes.cpp \
+    transactionviewdialog.cpp
 
 HEADERS  += mainwindow.h \
     databaseaccess.h \
     logindialog.h \
-    addorderdialog.h
+    addorderdialog.h \
+    tradetypes.h \
+    transactionviewdialog.h
 
 FORMS    += mainwindow.ui \
     logindialog.ui \
-    addorderdialog.ui
+    addorderdialog.ui \
+    transactionviewdialog.ui
 
 RESOURCES += \
     multi_language.qrc

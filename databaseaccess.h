@@ -1,10 +1,13 @@
 #ifndef DATABASEACCESS_H
 #define DATABASEACCESS_H
 
+#include "tradetypes.h"
+
 #include <QObject>
 #include <QSqlDatabase>
 #include <QString>
 #include <QSqlError>
+#include <QSqlQuery>
 
 class DatabaseAccess : public QObject
 {
@@ -16,6 +19,7 @@ public:
     bool connectToDatabase() {return db.open();}
     QString lastError() const {return db.lastError().text();}
     QSqlDatabase& getDatabase() {return db;}
+    void writeTransaction(TransactionType trans_type);
 
 signals:
 

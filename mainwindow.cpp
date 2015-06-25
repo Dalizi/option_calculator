@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "addorderdialog.h"
+#include "transactionviewdialog.h"
 
 #include <QSqlTableModel>
 
@@ -10,6 +12,8 @@ MainWindow::MainWindow(DatabaseAccess *db, QWidget *parent) :
 {
     ui->setupUi(this);
     initPositionTable();
+    connect(ui->orderPlaceMenu, SIGNAL(triggered(QAction *)), this, SLOT(onOrderPlaceMenuTriggered(QAction *)));
+    connect(ui->transactionMenu, SIGNAL(triggered(QAction *)), this, SLOT(onTransactionMenuTriggered(QAction *)));
 }
 
 MainWindow::~MainWindow()
@@ -36,6 +40,16 @@ void MainWindow::initPositionTable() {
     ui->positionTableView->setModel(model);
 }
 
-void MainWindow::onOrderPlaceMenuTriggered() {
+void MainWindow::onOrderPlaceMenuTriggered(QAction *action) {
+    if (action == ui->orderPlaceAction) {
+        auto opd = new addOrderDialog(db);
+        opd->show();
+    }
+}
 
+void MainWindow::onTransactionMenuTriggered(QAction *action) {
+    if (action == ui->transactionQueryAction) {
+        auto tvd = new transactionViewDialog(db);
+        tvd->show();
+    }
 }

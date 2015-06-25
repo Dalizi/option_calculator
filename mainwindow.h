@@ -24,7 +24,8 @@ private:
     void initPositionTable();
 
 public slots:
-    void onOrderPlaceMenuTriggered();
+    void onOrderPlaceMenuTriggered(QAction *);
+    void onTransactionMenuTriggered(QAction *);
 };
 
 #endif // MAINWINDOW_H

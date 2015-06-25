@@ -17,10 +17,130 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <layout class="QFormLayout" name="formLayout"/>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>Instr Info</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="underlyingInstrTypeLabel">
+            <property name="text">
+             <string>Underlying Instr Type</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="strikePriceLabel">
+            <property name="text">
+             <string>Strike Price</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="strikePriceLineEdit"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="maturityLabel">
+            <property name="text">
+             <string>Maturity</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="maturityLineEdit"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="callPutLabel">
+            <property name="text">
+             <string>Call/Put</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="callPutComboBox"/>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="optionTypeLabel">
+            <property name="text">
+             <string>Option Type</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QComboBox" name="optionTypeComboBox"/>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="underlyingInstrTypeComboBox"/>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="underlyingCodeLabel">
+            <property name="text">
+             <string>Underlying Code</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLineEdit" name="underlyingCodeLineEdit"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </item>
      <item>
-      <layout class="QFormLayout" name="formLayout_2"/>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>Transaction Info</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <layout class="QFormLayout" name="formLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="priceLabel">
+            <property name="text">
+             <string>Price</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="priceLineEdit"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="amountLabel">
+            <property name="text">
+             <string>Amount</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="amountLineEdit"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="clientIDLabel">
+            <property name="text">
+             <string>Client ID</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="clientIDLineEdit"/>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="longShortLabel">
+            <property name="text">
+             <string>Long/Short</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="longShortComboBox"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </item>
     </layout>
    </item>

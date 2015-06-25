@@ -113,18 +113,30 @@
      <family>WenQuanYi Micro Hei</family>
     </font>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="orderPlaceMenu">
     <property name="font">
      <font>
       <family>WenQuanYi Micro Hei</family>
      </font>
     </property>
     <property name="title">
-     <string>持仓</string>
+     <string>下单</string>
     </property>
     <addaction name="orderPlaceAction"/>
    </widget>
-   <addaction name="menu"/>
+   <widget class="QMenu" name="transactionMenu">
+    <property name="font">
+     <font>
+      <family>WenQuanYi Micro Hei</family>
+     </font>
+    </property>
+    <property name="title">
+     <string>成交</string>
+    </property>
+    <addaction name="transactionQueryAction"/>
+   </widget>
+   <addaction name="orderPlaceMenu"/>
+   <addaction name="transactionMenu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -158,6 +170,16 @@
   <action name="deletePositionAction">
    <property name="text">
     <string>删除持仓</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>WenQuanYi Micro Hei</family>
+    </font>
+   </property>
+  </action>
+  <action name="transactionQueryAction">
+   <property name="text">
+    <string>成交查询</string>
    </property>
    <property name="font">
     <font>
