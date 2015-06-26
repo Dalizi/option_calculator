@@ -19,14 +19,20 @@ SOURCES += main.cpp\
     logindialog.cpp \
     addorderdialog.cpp \
     tradetypes.cpp \
-    transactionviewdialog.cpp
+    transactionviewdialog.cpp \
+    valuation_class.cpp \
+    accessredis.cpp \
+    base_function.cpp
 
 HEADERS  += mainwindow.h \
     databaseaccess.h \
     logindialog.h \
     addorderdialog.h \
     tradetypes.h \
-    transactionviewdialog.h
+    transactionviewdialog.h \
+    base_function.h \
+    valuation_class.h \
+    accessredis.h
 
 FORMS    += mainwindow.ui \
     logindialog.ui \
@@ -35,3 +41,5 @@ FORMS    += mainwindow.ui \
 
 RESOURCES += \
     multi_language.qrc
+
+LIBS += -lhiredis

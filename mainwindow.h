@@ -4,6 +4,7 @@
 #include "databaseaccess.h"
 
 #include <QMainWindow>
+#include <QSqlTableModel>
 
 namespace Ui {
 class MainWindow;
@@ -20,12 +21,14 @@ public:
 private:
     Ui::MainWindow *ui;
     DatabaseAccess *db;
+    QSqlTableModel *model;
 
     void initPositionTable();
 
 public slots:
     void onOrderPlaceMenuTriggered(QAction *);
     void onTransactionMenuTriggered(QAction *);
+    void onTransactionWritten();
 };
 
 #endif // MAINWINDOW_H

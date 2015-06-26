@@ -84,6 +84,26 @@
           <item row="5" column="1">
            <widget class="QLineEdit" name="underlyingCodeLineEdit"/>
           </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="underlyingPriceLabel">
+            <property name="text">
+             <string>Underlying Price</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLineEdit" name="underlyingPriceLineEdit"/>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="kickOutPriceLabel">
+            <property name="text">
+             <string>Kick-Out Price</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
+           <widget class="QLineEdit" name="kickOutPriceLineEdit"/>
+          </item>
          </layout>
         </item>
        </layout>

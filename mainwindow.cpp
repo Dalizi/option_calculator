@@ -3,7 +3,6 @@
 #include "addorderdialog.h"
 #include "transactionviewdialog.h"
 
-#include <QSqlTableModel>
 
 MainWindow::MainWindow(DatabaseAccess *db, QWidget *parent) :
     QMainWindow(parent),
@@ -22,7 +21,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::initPositionTable() {
-    auto model = new QSqlTableModel(this, db->getDatabase());
+    model = new QSqlTableModel(this, db->getDatabase());
     model->setTable("positions");
     model->select();
     model->setHeaderData(0, Qt::Horizontal, tr("Client ID"));
@@ -42,7 +41,7 @@ void MainWindow::initPositionTable() {
 
 void MainWindow::onOrderPlaceMenuTriggered(QAction *action) {
     if (action == ui->orderPlaceAction) {
-        auto opd = new addOrderDialog(db);
+        auto opd = new addOrderDialog(db, this);
         opd->show();
     }
 }
@@ -52,4 +51,8 @@ void MainWindow::onTransactionMenuTriggered(QAction *action) {
         auto tvd = new transactionViewDialog(db);
         tvd->show();
     }
+}
+
+void MainWindow::onTransactionWritten() {
+    model->select();
 }

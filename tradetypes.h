@@ -25,7 +25,8 @@ struct TransactionType {
     OpenOffsetType open_offset = OPEN;	//开平方向
     double underlying_price = 0; //标的价格
     QString underlying_code; //标的
-    double close_pnl = 0; //平仓盈亏
+    double close_pnl = 0;
+    double kickout_price =0;
 
 };
 
@@ -38,8 +39,17 @@ struct PositionType {
     int frozen_amount = 0; //冻结数量
     double occupied_margin = 0;
     double underlying_price = 0;
+    double kickout_price = 0;
     QString underlying_code;
     QString contractNo;
     LongShortType long_short = LONG_ORDER; //买卖方向
+};
+
+struct PositionRisk {
+    double delta;
+    double delta_f;
+    double gamma;
+    double vega;
+    double theta;
 };
 #endif // TRADETYPES_H
