@@ -23,7 +23,7 @@ public:
     bool connectToDatabase() {return db.open();}
     QString lastError() const {return db.lastError().text();}
     QSqlDatabase& getDatabase() {return db;}
-    void writeTransaction(TransactionType trans_type);
+    bool writeTransaction(TransactionType trans_type);
     void updatePosition(PositionType &pt, const TransactionType &tt);
 
     std::vector<PositionType> getAllPosition();
@@ -34,7 +34,7 @@ signals:
     void transactionWritten(TransactionType trans);
 
 public slots:
-    void writePosition(const TransactionType &trans);
+    bool writePosition(const TransactionType &trans);
 };
 
 #endif // DATABASEACCESS_H
