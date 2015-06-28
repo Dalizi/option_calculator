@@ -29,6 +29,11 @@ public slots:
     void onOrderPlaceMenuTriggered(QAction *);
     void onTransactionMenuTriggered(QAction *);
     void onTransactionWritten();
+
+private slots:
+    void onDeleteActionTriggered();
+    void onRevertButtonClicked();
+    void on_savePushButton_clicked();
 };
 
 #endif // MAINWINDOW_H

@@ -17,10 +17,8 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
     DatabaseAccess db;
-//    Option_Value calc_server("ConfigFile.txt", );
     LoginDialog login(&db);
     if (login.exec()){
-        db.test();
         MainWindow w(&db);
         w.show();
         return a.exec();

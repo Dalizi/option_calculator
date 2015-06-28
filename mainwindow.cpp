@@ -3,6 +3,7 @@
 #include "addorderdialog.h"
 #include "transactionviewdialog.h"
 
+#include <QMessageBox>
 
 MainWindow::MainWindow(DatabaseAccess *db, QWidget *parent) :
     QMainWindow(parent),
@@ -11,8 +12,12 @@ MainWindow::MainWindow(DatabaseAccess *db, QWidget *parent) :
 {
     ui->setupUi(this);
     initPositionTable();
+    QAction *deleteAction = new QAction("Delte record", 0);
+    ui->positionTableView->addAction(deleteAction);
     connect(ui->orderPlaceMenu, SIGNAL(triggered(QAction *)), this, SLOT(onOrderPlaceMenuTriggered(QAction *)));
     connect(ui->transactionMenu, SIGNAL(triggered(QAction *)), this, SLOT(onTransactionMenuTriggered(QAction *)));
+    connect(deleteAction, SIGNAL(triggered(bool)), this, SLOT(onDeleteActionTriggered()));
+    connect(ui->revertPushButton, SIGNAL(clicked(bool)), model, SLOT(revertAll()));
 }
 
 MainWindow::~MainWindow()
@@ -55,4 +60,21 @@ void MainWindow::onTransactionMenuTriggered(QAction *action) {
 
 void MainWindow::onTransactionWritten() {
     model->select();
+}
+
+void MainWindow::onDeleteActionTriggered() {
+    if (!ui->positionTableView->currentIndex().isValid())
+        return;
+    int row = ui->positionTableView->currentIndex().row();
+    if (QMessageBox::question(0, tr("Warning"), tr("Do you want to remove this record?")) == QMessageBox::Yes)
+        model->removeRow(row);
+}
+
+void MainWindow::onRevertButtonClicked() {
+    model->revertAll();
+}
+
+void MainWindow::on_savePushButton_clicked()
+{
+    model->submitAll();
 }
