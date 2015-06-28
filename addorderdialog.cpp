@@ -33,6 +33,8 @@ void addOrderDialog::accept() {
     instr_code += ui->optionTypeComboBox->currentText();
     instr_code += '-';
     instr_code += ui->strikePriceLineEdit->text();
+    instr_code += '-';
+    instr_code += ui->maturityDateEdit->date().toString("yyyyMMdd");
     trans.instr_code = instr_code;
     trans.client_id = ui->clientIDLineEdit->text().toInt();
     trans.price = ui->priceLineEdit->text().toDouble();
@@ -41,6 +43,6 @@ void addOrderDialog::accept() {
     trans.underlying_code = ui->underlyingCodeLineEdit->text();
     trans.underlying_price = ui->underlyingPriceLineEdit->text().toDouble();
     trans.knockout_price = ui->kickOutPriceLineEdit->text().toDouble();
-    db->writeTransaction(trans);
-    QDialog::accept();
+    if (db->writeTransaction(trans))
+        QDialog::accept();
 }
