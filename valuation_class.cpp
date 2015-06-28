@@ -368,14 +368,14 @@ double Option_Value::Position_PnL(PositionType Position, bool isMain)
         if (strcmp(temp.c_str(), "P01") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=2;}
 
         //Barrier Options
-        if (strcmp(temp.c_str(), "COO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="1";temp_param.other_param["Barrier"]=Position.kickout_price;}
-        if (strcmp(temp.c_str(), "POO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="2";temp_param.other_param["Barrier"]=Position.kickout_price;}
-        if (strcmp(temp.c_str(), "COI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="3";temp_param.other_param["Barrier"]=Position.kickout_price;}
-        if (strcmp(temp.c_str(), "POI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="4";temp_param.other_param["Barrier"]=Position.kickout_price;}
-        if (strcmp(temp.c_str(), "CDO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="5";temp_param.other_param["Barrier"]=Position.kickout_price;}
-        if (strcmp(temp.c_str(), "PDO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="6";temp_param.other_param["Barrier"]=Position.kickout_price;}
-        if (strcmp(temp.c_str(), "CDI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="7";temp_param.other_param["Barrier"]=Position.kickout_price;}
-        if (strcmp(temp.c_str(), "PDI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="8";temp_param.other_param["Barrier"]=Position.kickout_price;}
+        if (strcmp(temp.c_str(), "COO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="1";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "POO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="2";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "COI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="3";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "POI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="4";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "CDO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="5";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "PDO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="6";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "CDI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="7";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "PDI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="8";temp_param.other_param["Barrier"]=Position.knockout_price;}
 
         temp_param.Strike_Price = strike;
         temp_param.TimeToMaturity = maturity;

@@ -22,8 +22,8 @@ void DatabaseAccess::setLoginInfo(const QString &user_name, const QString &passw
 
 void DatabaseAccess::writeTransaction(TransactionType trans) {
     QSqlQuery query(db);
-    query.prepare("INSERT INTO transactions (client_id, instr_code, price, amount, long_short, open_offset, underlying_price, underlying_code, close_pnl, kickout_price)"
-                  " VALUES(:client_id, :instr_code, :price, :amount, :long_short, :open_offset, :underlying_price, :underlying_code, :close_pnl, :kickout_price);");
+    query.prepare("INSERT INTO transactions (client_id, instr_code, price, amount, long_short, open_offset, underlying_price, underlying_code, close_pnl, knockout_price)"
+                  " VALUES(:client_id, :instr_code, :price, :amount, :long_short, :open_offset, :underlying_price, :underlying_code, :close_pnl, :knockout_price);");
     query.bindValue(":client_id", trans.client_id);
     query.bindValue(":instr_code", trans.instr_code);
     query.bindValue(":price", trans.price);
@@ -33,7 +33,7 @@ void DatabaseAccess::writeTransaction(TransactionType trans) {
     query.bindValue(":underlying_price", trans.underlying_price);
     query.bindValue(":underlying_code", trans.underlying_code);
     query.bindValue(":close_pnl", trans.close_pnl);
-    query.bindValue(":kickout_price", trans.kickout_price);
+    query.bindValue(":knockout_price", trans.knockout_price);
     if (!query.exec()) {
         QMessageBox::warning(0, "写入成交记录失败", query.lastError().text());
     }
@@ -91,8 +91,8 @@ void DatabaseAccess::writePosition(const TransactionType &trans) {
 //            QMessageBox::warning(0, "更新持仓信息失败", query.lastError().text());
 //    }
     QSqlQuery query(db);
-    query.prepare("INSERT INTO positions (client_id, instr_code, average_price, total_amount, available_amount, frozen_amount, long_short, underlying_price, underlying_code, kickout_price)"
-                  " VALUES(:client_id, :instr_code, :average_price, :total_amount, :available_amount, :frozen_amount, :long_short, :underlying_price, :underlying_code, :kickout_price);");
+    query.prepare("INSERT INTO positions (client_id, instr_code, average_price, total_amount, available_amount, frozen_amount, long_short, underlying_price, underlying_code, knockout_price, contract_no)"
+                  " VALUES(:client_id, :instr_code, :average_price, :total_amount, :available_amount, :frozen_amount, :long_short, :underlying_price, :underlying_code, :knockout_price, :contract_no);");
     query.bindValue(":client_id", trans.client_id);
     query.bindValue(":instr_code", trans.instr_code);
     query.bindValue(":long_short", trans.long_short == LONG_ORDER?"long":"short");
@@ -102,7 +102,7 @@ void DatabaseAccess::writePosition(const TransactionType &trans) {
     query.bindValue(":frozen_amount", 0);
     query.bindValue(":underlying_code", trans.underlying_code);
     query.bindValue(":underlying_price", trans.underlying_price);
-    query.bindValue(":kickout_price", trans.kickout_price);
+    query.bindValue(":knockout_price", trans.knockout_price);
     if (!query.exec())
         QMessageBox::warning(0, "添加持仓信息失败", query.lastError().text());
 }
@@ -145,18 +145,31 @@ void DatabaseAccess::updatePosition(PositionType &pt, const TransactionType &tt)
 }
 
 //CREATE TABLE IF NOT EXISTS positions (
-//    client_id INT,
-//    instr_code VARCHAR(20),
-//    average_price DOUBLE,
-//    total_amount int,
-//    available_amount int,
-//    frozen_amount int,
-//    long_short ENUM('long', 'short'),
-//    underlying_price DOUBLE,
-//    occupied_margin DOUBLE,
-//    underlying_code VARCHAR(20),
-//    knock_out INT,
-//    contract_no VARCHAR(20));
+//    client_id INT NOT NULL,
+//    instr_code VARCHAR(20) NOT NULL,
+//    average_price DOUBLE NOT NULL,
+//    total_amount int NOT NULL,
+//    available_amount int NOT NULL,
+//    frozen_amount int NOT NULL,
+//    long_short ENUM('long', 'short') NOT NULL,
+//    underlying_price DOUBLE NOT NULL,
+//    occupied_margin DOUBLE NOT NULL,
+//    underlying_code VARCHAR(20) NOT NULL,
+//    knockout_price DOUBLE NOT NULL,
+//    contract_no VARCHAR(20) NOT NULL);
+
+//CREATE TABLE IF NOT EXISTS transactions (
+//        client_id INT NOT NULL,
+//        instr_code VARCHAR(20) NOT NULL,
+//        price DOUBLE NOT NULL,
+//        amount INT NOT NULL,
+//        long_short ENUM('long', 'short') NOT NULL,
+//        open_offset ENUM('open', 'offset') NOT NULL,
+//        underlying_price DOUBLE NOT NULL,
+//        underlying_code VARCHAR(20) NOT NULL,
+//        close_pnl DOUBLE NOT NULL,
+//        knockout_price DOUBLE NOT NULL,
+//        contract_no VARCHAR(20) NOT NULL);
 
 vector<PositionType> DatabaseAccess::getAllPosition() {
     QSqlQuery query(db);
@@ -176,9 +189,21 @@ vector<PositionType> DatabaseAccess::getAllPosition() {
         position.occupied_margin = query.value("occupied_margin").toDouble();
         position.underlying_code = query.value("underlying_code ").toString();
         position.underlying_price = query.value("underlying_price").toDouble();
-        position.kickout_price= query.value("kickout_price").toDouble();
+        position.knockout_price= query.value("knockout_price").toDouble();
         ret.push_back(position);
     }
     return ret;
 
+}
+
+void DatabaseAccess::test() {
+    QSqlQuery query(db);
+    query.prepare("SHOW GRANTS FOR current_user;");
+    if (!query.exec())
+        qDebug() << query.lastError();
+    qDebug() <<query.value(0).toString();
+}
+
+QString DatabaseAccess::genContractNum() {
+    return "test";
 }

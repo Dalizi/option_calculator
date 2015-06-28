@@ -40,7 +40,7 @@ void addOrderDialog::accept() {
     trans.long_short = ui->longShortComboBox->currentText() == "Long"?LONG_ORDER:SHORT_ORDER;
     trans.underlying_code = ui->underlyingCodeLineEdit->text();
     trans.underlying_price = ui->underlyingPriceLineEdit->text().toDouble();
-    trans.kickout_price = ui->kickOutPriceLineEdit->text().toDouble();
+    trans.knockout_price = ui->kickOutPriceLineEdit->text().toDouble();
     db->writeTransaction(trans);
     QDialog::accept();
 }

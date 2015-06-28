@@ -42,4 +42,5 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     multi_language.qrc
 
+
 LIBS += -lhiredis
