@@ -27,6 +27,7 @@ struct TransactionType {
     QString underlying_code; //标的
     double close_pnl = 0;
     double knockout_price =0;
+    QString contract_no;
 
 };
 
@@ -41,7 +42,7 @@ struct PositionType {
     double underlying_price = 0;
     double knockout_price = 0;
     QString underlying_code;
-    QString contractNo;
+    QString contract_no;
     LongShortType long_short = LONG_ORDER; //买卖方向
 };
 
