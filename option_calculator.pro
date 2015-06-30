@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     transactionviewdialog.cpp \
     valuation_class.cpp \
     accessredis.cpp \
-    base_function.cpp
+    base_function.cpp \
+    optioncalcdialog.cpp
 
 HEADERS  += mainwindow.h \
     databaseaccess.h \
@@ -32,12 +33,14 @@ HEADERS  += mainwindow.h \
     transactionviewdialog.h \
     base_function.h \
     valuation_class.h \
-    accessredis.h
+    accessredis.h \
+    optioncalcdialog.h
 
 FORMS    += mainwindow.ui \
     logindialog.ui \
     addorderdialog.ui \
-    transactionviewdialog.ui
+    transactionviewdialog.ui \
+    optioncalcdialog.ui
 
 RESOURCES += \
     multi_language.qrc
