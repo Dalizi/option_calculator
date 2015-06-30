@@ -94,6 +94,40 @@
           </property>
          </widget>
         </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="deltaFLabel">
+          <property name="text">
+           <string>Delta F</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QLineEdit" name="deltaFLineEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QPushButton" name="refreshPushButton">
+          <property name="text">
+           <string>Refresh</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
        </layout>
       </item>
       <item>
@@ -190,8 +224,20 @@
     </property>
     <addaction name="transactionQueryAction"/>
    </widget>
+   <widget class="QMenu" name="calcMenu">
+    <property name="font">
+     <font>
+      <family>WenQuanYi Micro Hei</family>
+     </font>
+    </property>
+    <property name="title">
+     <string>计算</string>
+    </property>
+    <addaction name="optionPricingAction"/>
+   </widget>
    <addaction name="orderPlaceMenu"/>
    <addaction name="transactionMenu"/>
+   <addaction name="calcMenu"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -235,6 +281,16 @@
   <action name="transactionQueryAction">
    <property name="text">
     <string>成交查询</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>WenQuanYi Micro Hei</family>
+    </font>
+   </property>
+  </action>
+  <action name="optionPricingAction">
+   <property name="text">
+    <string>期权报价</string>
    </property>
    <property name="font">
     <font>

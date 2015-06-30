@@ -3,26 +3,32 @@
 #include "addorderdialog.h"
 #include "transactionviewdialog.h"
 
+
 #include <QMessageBox>
 
-MainWindow::MainWindow(DatabaseAccess *db, QWidget *parent) :
+MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    db(db)
+    db(db),
+    calc_server(calc_server),
+    opt_calc(new OptionCalcDialog(calc_server))
 {
     ui->setupUi(this);
     initPositionTable();
+    updateRiskInfo();
     QAction *deleteAction = new QAction("Delte record", 0);
     ui->positionTableView->addAction(deleteAction);
     connect(ui->orderPlaceMenu, SIGNAL(triggered(QAction *)), this, SLOT(onOrderPlaceMenuTriggered(QAction *)));
     connect(ui->transactionMenu, SIGNAL(triggered(QAction *)), this, SLOT(onTransactionMenuTriggered(QAction *)));
     connect(deleteAction, SIGNAL(triggered(bool)), this, SLOT(onDeleteActionTriggered()));
     connect(ui->revertPushButton, SIGNAL(clicked(bool)), model, SLOT(revertAll()));
+    connect(ui->optionPricingAction, SIGNAL(triggered()), opt_calc, SLOT(show()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete opt_calc;
 }
 
 void MainWindow::initPositionTable() {
@@ -66,6 +72,7 @@ void MainWindow::onDeleteActionTriggered() {
     if (!ui->positionTableView->currentIndex().isValid())
         return;
     int row = ui->positionTableView->currentIndex().row();
+    ui->positionTableView->selectRow(row);
     if (QMessageBox::question(0, tr("Warning"), tr("Do you want to remove this record?")) == QMessageBox::Yes)
         model->removeRow(row);
 }
@@ -77,4 +84,30 @@ void MainWindow::onRevertButtonClicked() {
 void MainWindow::on_savePushButton_clicked()
 {
     model->submitAll();
+}
+
+void MainWindow::on_refreshPushButton_clicked()
+{
+    updateRiskInfo();
+}
+
+void MainWindow::updateRiskInfo() {
+    PositionRisk ret;
+    double pnl;
+    auto positions = db->getAllPosition();
+    for (auto p:positions) {
+        auto pr = calc_server->PositionGreeks(p);
+        pnl += calc_server->Position_PnL(p, false);
+        ret.delta += pr.delta;
+        ret.delta_f += pr.delta_f;
+        ret.gamma += pr.gamma;
+        ret.theta += pr.theta;
+        ret.vega += pr.vega;
+    }
+    ui->deltaLineEdit->setText(QString::number(ret.delta));
+    ui->deltaFLineEdit->setText(QString::number(ret.delta_f));
+    ui->gammaLineEdit->setText(QString::number(ret.gamma));
+    ui->thetaLineEdit->setText(QString::number(ret.theta));
+    ui->vegaLineEdit->setText(QString::number(ret.vega));
+    ui->pnlLineEdit->setText(QString::number(pnl));
 }
