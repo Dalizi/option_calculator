@@ -10,9 +10,9 @@ extern string REDIS_ADDR;
 extern int REDIS_PORT;
 extern string REDIS_PASSWD;
 
-Option_Value::Option_Value(string infile_location, map<string,pricing_param> parameters)
+OptionValue::OptionValue(string trade_date_file, const map<string,PricingParam> &parameters)
 {
-    ifstream in_file(infile_location);
+    ifstream in_file(trade_date_file);
 
     if (!in_file.is_open()) {
         QMessageBox::about(0, "ERROR", "Error loading trade date info.");
@@ -39,54 +39,54 @@ Option_Value::Option_Value(string infile_location, map<string,pricing_param> par
 	return;
 }
 
-Option_Value::~Option_Value()
+OptionValue::~OptionValue()
 {
 	Stop();
 }
 
-void Option_Value::ParameterToMap()
+void OptionValue::ParameterToMap()
 {
 	char * temp = new char[100];
 	temp_param.clear();
 	temp_param=value_parameter.other_param;
 
-	sprintf(temp, "%f", value_parameter.Strike_Price);
+    sprintf(temp, "%f", value_parameter.strike_price);
 	temp_param["Strike"] = temp;
-	sprintf(temp, "%f", value_parameter.Spot_Price);
+    sprintf(temp, "%f", value_parameter.spot_price);
 	temp_param["Underlying"] = temp;
-	sprintf(temp, "%f", value_parameter.Free_Rate);
+    sprintf(temp, "%f", value_parameter.free_rate);
 	temp_param["FreeRate"] = temp;
-	sprintf(temp, "%f", value_parameter.Yield_Rate);
+    sprintf(temp, "%f", value_parameter.yield_rate);
 	temp_param["YiledRate"] = temp;
-	sprintf(temp, "%f", value_parameter.Volatility);
-	temp_param["Volatility"] = temp;
-	sprintf(temp, "%f", value_parameter.TimeToMaturity);
+    sprintf(temp, "%f", value_parameter.volatility);
+    temp_param["volatility"] = temp;
+    sprintf(temp, "%f", value_parameter.time_to_maturity);
 	temp_param["Maturity"] = temp;
-	sprintf(temp, "%d", value_parameter.Option_Type);
+    sprintf(temp, "%d", value_parameter.option_type);
 	temp_param["OptionType"] = temp;
-	sprintf(temp, "%d", value_parameter.Value_Method);
+    sprintf(temp, "%d", value_parameter.value_method);
 	temp_param["ValueMethod"] = temp;
 
 	delete[] temp;
 	return;
 }
 
-void Option_Value::MapToParameter()
+void OptionValue::MapToParameter()
 {
 	param_lock.lock();
-	value_parameter.Free_Rate =atof( temp_param["FreeRate"].c_str());
-	value_parameter.Yield_Rate = atof(temp_param["YiledRate"].c_str());
-	value_parameter.Spot_Price = atof(temp_param["Underlying"].c_str());
-	value_parameter.Strike_Price =atof( temp_param["Strike"].c_str());
-	value_parameter.Volatility = atof(temp_param["Volatility"].c_str());
-	value_parameter.Option_Type = atoi(temp_param["OptionType"].c_str());
-	value_parameter.TimeToMaturity = atof(temp_param["Maturity"].c_str());
-	value_parameter.Value_Method = atoi(temp_param["ValueMethod"].c_str());
+    value_parameter.free_rate =atof( temp_param["FreeRate"].c_str());
+    value_parameter.yield_rate = atof(temp_param["YiledRate"].c_str());
+    value_parameter.spot_price = atof(temp_param["Underlying"].c_str());
+    value_parameter.strike_price =atof( temp_param["Strike"].c_str());
+    value_parameter.volatility = atof(temp_param["volatility"].c_str());
+    value_parameter.option_type = atoi(temp_param["OptionType"].c_str());
+    value_parameter.time_to_maturity = atof(temp_param["Maturity"].c_str());
+    value_parameter.value_method = atoi(temp_param["ValueMethod"].c_str());
 	temp_param.erase("FreeRate");
 	temp_param.erase("YieldRate");
 	temp_param.erase("Underlying");
 	temp_param.erase("Strike");
-	temp_param.erase("Volatility");
+    temp_param.erase("volatility");
 	temp_param.erase("OptionType");
 	temp_param.erase("Maturity");
 	temp_param.erase("ValueMethod");
@@ -95,7 +95,7 @@ void Option_Value::MapToParameter()
 	return;
 }
 
-void Option_Value::Parameter_Setting(string param_name, pricing_param param)
+void OptionValue::Parameter_Setting(string param_name, PricingParam param)
 {
     param_lock.lock();
     Parameters[param_name]=param;
@@ -103,7 +103,7 @@ void Option_Value::Parameter_Setting(string param_name, pricing_param param)
 	return;
 }
 
-void Option_Value::Parameters_Setting(map<string, pricing_param> & params)
+void OptionValue::Parameters_Setting(map<string, PricingParam> & params)
 {
 	param_lock.lock();
     Parameters=params;
@@ -111,7 +111,7 @@ void Option_Value::Parameters_Setting(map<string, pricing_param> & params)
 	return;
 }
 
-void Option_Value::Get_Parameters()
+void OptionValue::Get_Parameters()
 {
 	int iRet;
 	iRet=my_redis.HGetAll(Param_Key, temp_param);
@@ -120,7 +120,7 @@ void Option_Value::Get_Parameters()
 	return;
 }
 
-double Option_Value::Maturity_Remain(string maturity_date)
+double OptionValue::Maturity_Remain(string maturity_date)
 {
 	time_t now;
 	time(&now);
@@ -133,21 +133,21 @@ double Option_Value::Maturity_Remain(string maturity_date)
 	strftime(buffer, 100, "%Y-%m-%d", &today);
 
 	string cur_date = buffer;
-	for (int i = 0; i < Trade_Day.max_size(); i++)
+    for (int i = 0; i < Trade_Day.size(); i++)
 	{
 		if (strcmp(cur_date.c_str(), Trade_Day[i].c_str()) <= 0){
 			start = i;
 			break;
 		}
 	}
-	for (int i = 0; i < Trade_Day.max_size(); i++)
+    for (int i = 0; i < Trade_Day.size(); i++)
 	{
 		if (strcmp(maturity_date.c_str(), Trade_Day[i].c_str()) <= 0){
 			end = i;
 			break;
 		}
 	}
-	result = end - start;
+    result = end - start+1;
 	if (end - start <= 5){
 		if (today.tm_hour >= 10 && today.tm_hour < 11){
 			result = result - 1.25 / 4.5;
@@ -169,9 +169,9 @@ double Option_Value::Maturity_Remain(string maturity_date)
 	return result/256;
 }
 
-double Option_Value::Option_Valuation(pricing_param param)
+double OptionValue::Option_Valuation(PricingParam param)
 {
-	int method = param.Value_Method;
+    int method = param.value_method;
 	double result=0;
 	switch (method)
 	{
@@ -180,18 +180,18 @@ double Option_Value::Option_Valuation(pricing_param param)
 	return result;
 }
 
-int Option_Value::Delta_Hedger(vector<PositionType> &Position,double Spot_Price)
+int OptionValue::Delta_Hedger(vector<PositionType> &Position,double spot_price)
 {
 	double result=0;
 	double maturity,strike,basic_vola;
-	pricing_param temp_param;
+    PricingParam temp_param;
 	
 	param_lock.lock();
 	temp_param = value_parameter;
 	param_lock.unlock();
 
-	basic_vola = temp_param.Volatility;
-	temp_param.Spot_Price = Spot_Price;
+    basic_vola = temp_param.volatility;
+    temp_param.spot_price = spot_price;
 
 	for (int i = 0; i < Position.size(); i++)
 	{
@@ -205,14 +205,14 @@ int Option_Value::Delta_Hedger(vector<PositionType> &Position,double Spot_Price)
 			strike = atof(temp.c_str());
 			temp = Position[i].instr_code.toStdString().substr(pos_first - 3, 3);
 
-			if (strcmp(temp.c_str(), "C00") == 0){ temp_param.Option_Type = 1; }
-			if (strcmp(temp.c_str(), "P00") == 0){ temp_param.Option_Type = 2; }
+            if (strcmp(temp.c_str(), "C00") == 0){ temp_param.option_type = 1; }
+            if (strcmp(temp.c_str(), "P00") == 0){ temp_param.option_type = 2; }
 
-			temp_param.Strike_Price = strike;
-			temp_param.TimeToMaturity = maturity;
-			temp_param.Volatility = Volatility_Adjustment(basic_vola, maturity, strike);
+            temp_param.strike_price = strike;
+            temp_param.time_to_maturity = maturity;
+            temp_param.volatility = Volatility_Adjustment(basic_vola, maturity, strike);
 
-			switch (temp_param.Value_Method)
+            switch (temp_param.value_method)
 			{
 			case 1: result = result + 2*(-Position[i].long_short+0.5)*Position[i].total_amount*bls_vanila_delta(temp_param)*main_contract.multiplier; break;
 			}
@@ -227,7 +227,7 @@ int Option_Value::Delta_Hedger(vector<PositionType> &Position,double Spot_Price)
 	return (int)round(result/300);
 }
 
-int Option_Value::Hedger_Excute(int net_delta,double price)
+int OptionValue::Hedger_Excute(int net_delta,double price)
 {
 	double excute_price;
 	int amount;
@@ -295,18 +295,18 @@ int Option_Value::Hedger_Excute(int net_delta,double price)
 	return 0;
 }
 
-double Option_Value::Volatility_Adjustment(double basic_vol, double maturity, double strike)
+double OptionValue::Volatility_Adjustment(double basic_vol, double maturity, double strike)
 {
 
 	return basic_vol;
 }
 
-double Option_Value::Spread_Adjustment(double maturity, double strike, map<string, double> &position)
+double OptionValue::Spread_Adjustment(double maturity, double strike, map<string, double> &position)
 {
 	return 0;
 }
 
-double Option_Value::Basis_Spread( map<string,string> &basis)
+double OptionValue::Basis_Spread( map<string,string> &basis)
 {
 	double spread=0;
 	string type = basis["Spread_Type"];
@@ -328,19 +328,19 @@ double Option_Value::Basis_Spread( map<string,string> &basis)
 	return spread;
 }
 
-double Option_Value::Position_PnL(PositionType Position, bool isMain)
+double OptionValue::Position_PnL(PositionType Position, bool isMain)
 {
 
     LongShortType ls=Position.long_short;
     double result = 0;
-    pricing_param temp_param;
+    PricingParam temp_param;
     map<string, string> update_data;
     string underlying_code=Position.underlying_code.toStdString();
     int iRet = my_redis.HGetAll(underlying_code, update_data);
     float last_spot = atof(update_data["LastPrice"].c_str());
 
     double maturity, strike, basic_vola;
-    basic_vola = temp_param.Volatility;
+    basic_vola = temp_param.volatility;
 
     if (strcmp(Position.instr_code.toStdString().substr(0, 4).c_str(), "OTC-") == 0){
         int l = Position.instr_code.toStdString().length();
@@ -356,36 +356,37 @@ double Option_Value::Position_PnL(PositionType Position, bool isMain)
         temp_param = Parameters[temp];
         param_lock.unlock();
 
-        temp_param.Spot_Price = last_spot;
+        basic_vola = temp_param.volatility;
+        temp_param.spot_price = last_spot;
 
         temp = Position.instr_code.toStdString().substr(pos_first - 3, 3);
         //European Options
-        if (strcmp(temp.c_str(), "C00") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=1;}
-        if (strcmp(temp.c_str(), "P00") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=1;}
+        if (strcmp(temp.c_str(), "C00") == 0){ temp_param.option_type = 1; temp_param.value_method=1;}
+        if (strcmp(temp.c_str(), "P00") == 0){ temp_param.option_type = 2; temp_param.value_method=1;}
 
         //American Options
-        if (strcmp(temp.c_str(), "C01") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=2;}
-        if (strcmp(temp.c_str(), "P01") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=2;}
+        if (strcmp(temp.c_str(), "C01") == 0){ temp_param.option_type = 1; temp_param.value_method=2;}
+        if (strcmp(temp.c_str(), "P01") == 0){ temp_param.option_type = 2; temp_param.value_method=2;}
 
         //Barrier Options
-        if (strcmp(temp.c_str(), "COO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="1";temp_param.other_param["Barrier"]=Position.knockout_price;}
-        if (strcmp(temp.c_str(), "POO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="2";temp_param.other_param["Barrier"]=Position.knockout_price;}
-        if (strcmp(temp.c_str(), "COI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="3";temp_param.other_param["Barrier"]=Position.knockout_price;}
-        if (strcmp(temp.c_str(), "POI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="4";temp_param.other_param["Barrier"]=Position.knockout_price;}
-        if (strcmp(temp.c_str(), "CDO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="5";temp_param.other_param["Barrier"]=Position.knockout_price;}
-        if (strcmp(temp.c_str(), "PDO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="6";temp_param.other_param["Barrier"]=Position.knockout_price;}
-        if (strcmp(temp.c_str(), "CDI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="7";temp_param.other_param["Barrier"]=Position.knockout_price;}
-        if (strcmp(temp.c_str(), "PDI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="8";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "COO") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="1";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "POO") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="2";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "COI") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="3";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "POI") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="4";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "CDO") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="5";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "PDO") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="6";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "CDI") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="7";temp_param.other_param["Barrier"]=Position.knockout_price;}
+        if (strcmp(temp.c_str(), "PDI") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="8";temp_param.other_param["Barrier"]=Position.knockout_price;}
 
-        temp_param.Strike_Price = strike;
-        temp_param.TimeToMaturity = maturity;
-        temp_param.Volatility = Volatility_Adjustment(basic_vola, maturity, strike);
+        temp_param.strike_price = strike;
+        temp_param.time_to_maturity = maturity;
+        temp_param.volatility = Volatility_Adjustment(basic_vola, maturity, strike);
 
-        switch (temp_param.Value_Method)
+        switch (temp_param.value_method)
         {
         case 1:
         {
-                  result = 2 * (-(int)Position.long_short + 0.5)*Position.total_amount*(bls_vanila_option(temp_param)- Position.average_price)*main_contract.multiplier; break;
+                  result = 2 * (-(int)Position.long_short + 0.5)*Position.total_amount*(bls_vanila_option(temp_param)- Position.average_price); break;
         }
         }
     }
@@ -394,7 +395,7 @@ double Option_Value::Position_PnL(PositionType Position, bool isMain)
     return result;
 }
 
-void Option_Value::Init()
+void OptionValue::Init()
 {
 
     string cur_date = QDate::currentDate().toString("%Y-%m-%d").toStdString();
@@ -411,16 +412,16 @@ void Option_Value::Init()
 	return;
 }
 
-void Option_Value::Start()
+void OptionValue::Start()
 {
     //value_flag = true;
 	//hedge_flag = true;
-    //main_thread = std::thread(&Option_Value::main_value_process, this, this);
-	//hedge_thread = thread(&Option_Value::Auto_Hedger, this, this);
+    //main_thread = std::thread(&OptionValue::main_value_process, this, this);
+    //hedge_thread = thread(&OptionValue::Auto_Hedger, this, this);
 	return;
 }
 
-void Option_Value::Stop()
+void OptionValue::Stop()
 {
     //value_flag = false;
     //main_thread.join();
@@ -429,10 +430,10 @@ void Option_Value::Stop()
 	return;
 }
 
-void Option_Value::main_value_process(void *stParam)
+void OptionValue::main_value_process(void *stParam)
 {
-    /*Option_Value *ptr = (Option_Value *)stParam;
-	pricing_param temp_param;
+    /*OptionValue *ptr = (OptionValue *)stParam;
+    PricingParam temp_param;
 	time_t now;
 	struct tm current;
 	map<string, string>update_data;
@@ -443,7 +444,7 @@ void Option_Value::main_value_process(void *stParam)
 
 	ptr->Get_Parameters();
 	ptr->MapToParameter();
-	atm_strike = value_parameter.Strike_Price;
+    atm_strike = value_parameter.strike_price;
 	sprintf(buffer, "%d", atm_strike);
 	temp_code = buffer;
 	ptr->param_update = true;
@@ -480,30 +481,30 @@ void Option_Value::main_value_process(void *stParam)
 			ptr->param_lock.unlock();
 
 
-			temp_param.Spot_Price = last_spot;
+            temp_param.spot_price = last_spot;
 			spread = Basis_Spread(temp_param.other_param);
 
-			temp_param.Option_Type = 1;
-			temp_param.Volatility = temp_param.Volatility - spread;
+            temp_param.option_type = 1;
+            temp_param.volatility = temp_param.volatility - spread;
 			sprintf(buffer, "%f", ptr->Option_Valuation(temp_param));
 			ptr->main_contract.Quote["atm_vanila_call"]["bid"] = buffer;
-			temp_param.Volatility = temp_param.Volatility + 2*spread;
+            temp_param.volatility = temp_param.volatility + 2*spread;
 			sprintf(buffer, "%f", ptr->Option_Valuation(temp_param));
 			ptr->main_contract.Quote["atm_vanila_call"]["ask"] = buffer;
 			ptr->main_contract.Quote["atm_vanila_call"]["bid_volume"] = "500";
 			ptr->main_contract.Quote["atm_vanila_call"]["ask_volume"] = "500";
 
-			temp_param.Option_Type = 2;
-			temp_param.Volatility = temp_param.Volatility - 2 * spread;
+            temp_param.option_type = 2;
+            temp_param.volatility = temp_param.volatility - 2 * spread;
 			sprintf(buffer, "%f", ptr->Option_Valuation(temp_param));
 			ptr->main_contract.Quote["atm_vanila_put"]["bid"] = buffer;
-			temp_param.Volatility = temp_param.Volatility + 2 * spread;
+            temp_param.volatility = temp_param.volatility + 2 * spread;
 			sprintf(buffer, "%f", ptr->Option_Valuation(temp_param));
 			ptr->main_contract.Quote["atm_vanila_put"]["ask"] = buffer;
 			ptr->main_contract.Quote["atm_vanila_put"]["bid_volume"] = "500";
 			ptr->main_contract.Quote["atm_vanila_put"]["ask_volume"] = "500";
 
-			sprintf(buffer, "%f", temp_param.Volatility);
+            sprintf(buffer, "%f", temp_param.volatility);
 			ptr->main_contract.Quote["atm_vanila_call"]["implied_vol"] = buffer;
 			ptr->main_contract.Quote["atm_vanila_put"]["implied_vol"] = buffer;
 			my_redis.HMSet(ptr->main_contract.OTC_Code["atm_vanila_call"], ptr->main_contract.Quote["atm_vanila_call"]);
@@ -521,9 +522,9 @@ void Option_Value::main_value_process(void *stParam)
 	return;
 }
 
-void Option_Value::Auto_Hedger(void *stParam)
+void OptionValue::Auto_Hedger(void *stParam)
 {
-//	Option_Value *ptr = (Option_Value *)stParam;
+//	OptionValue *ptr = (OptionValue *)stParam;
 //	time_t now;
 //	struct tm current;
 //	map<string, string>update_data;
@@ -554,18 +555,18 @@ void Option_Value::Auto_Hedger(void *stParam)
 //	return;
 }
 
-double Option_Value::Position_Quote(const PositionType &Position)
+double OptionValue::Position_Quote(const PositionType &Position)
 {
     LongShortType ls=Position.long_short;
     double result = 0;
-    pricing_param temp_param;
+    PricingParam temp_param;
     map<string, string> update_data;
     string underlying_code=Position.underlying_code.toStdString();
     int iRet = my_redis.HGetAll(underlying_code, update_data);
     float last_spot = atof(update_data["LastPrice"].c_str());
 
     double maturity, strike, basic_vola;
-    basic_vola = temp_param.Volatility;
+    basic_vola = temp_param.volatility;
 
     if (strcmp(Position.instr_code.toStdString().substr(0, 4).c_str(), "OTC-") == 0){
         int l = Position.instr_code.toStdString().length();
@@ -581,32 +582,32 @@ double Option_Value::Position_Quote(const PositionType &Position)
         temp_param = Parameters[temp];
         param_lock.unlock();
 
-        temp_param.Spot_Price = last_spot;
+        temp_param.spot_price = last_spot;
 
         temp = Position.instr_code.toStdString().substr(pos_first - 3, 3);
         //European Options
-        if (strcmp(temp.c_str(), "C00") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=1;}
-        if (strcmp(temp.c_str(), "P00") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=1;}
+        if (strcmp(temp.c_str(), "C00") == 0){ temp_param.option_type = 1; temp_param.value_method=1;}
+        if (strcmp(temp.c_str(), "P00") == 0){ temp_param.option_type = 2; temp_param.value_method=1;}
 
         //American Options
-        if (strcmp(temp.c_str(), "C01") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=2;}
-        if (strcmp(temp.c_str(), "P01") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=2;}
+        if (strcmp(temp.c_str(), "C01") == 0){ temp_param.option_type = 1; temp_param.value_method=2;}
+        if (strcmp(temp.c_str(), "P01") == 0){ temp_param.option_type = 2; temp_param.value_method=2;}
 
         //Barrier Options
-//        if (strcmp(temp.c_str(), "COO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="1";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "POO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="2";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "COI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="3";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "POI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="4";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "CDO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="5";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "PDO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="6";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "CDI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="7";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "PDI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="8";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "COO") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="1";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "POO") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="2";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "COI") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="3";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "POI") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="4";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "CDO") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="5";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "PDO") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="6";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "CDI") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="7";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "PDI") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="8";temp_param.other_param["Barrier"]=Position.Barrier}
 
-        temp_param.Strike_Price = strike;
-        temp_param.TimeToMaturity = maturity;
-        temp_param.Volatility = Volatility_Adjustment(basic_vola, maturity, strike);
+        temp_param.strike_price = strike;
+        temp_param.time_to_maturity = maturity;
+        temp_param.volatility = Volatility_Adjustment(basic_vola, maturity, strike);
 
-        switch (temp_param.Value_Method)
+        switch (temp_param.value_method)
         {
         case 1:
         {
@@ -619,21 +620,21 @@ double Option_Value::Position_Quote(const PositionType &Position)
 	return result;
 }
 
-double Option_Value::Settle_Price(const string &instr_code, LongShortType long_short)
+double OptionValue::Settle_Price(const string &instr_code, LongShortType long_short)
 {
 	double result = 0;
-	double maturity, strike, basic_vola, Spot_Price;
-	pricing_param temp_param;
+    double maturity, strike, basic_vola, spot_price;
+    PricingParam temp_param;
 
 	param_lock.lock();
 	temp_param = value_parameter;
 	param_lock.unlock();
 
 
-    temp_param.Spot_Price = atof(temp_param.other_param["LastSettlePrice"].c_str());
-    temp_param.Volatility = atof(temp_param.other_param["LastSettleVola"].c_str());
-	Spot_Price = temp_param.Spot_Price;
-	basic_vola = temp_param.Volatility;
+    temp_param.spot_price = atof(temp_param.other_param["LastSettlePrice"].c_str());
+    temp_param.volatility = atof(temp_param.other_param["LastSettleVola"].c_str());
+    spot_price = temp_param.spot_price;
+    basic_vola = temp_param.volatility;
 
     if (strcmp(instr_code.substr(0, 4).c_str(), "OTC-") == 0){
         int l = instr_code.length();
@@ -645,41 +646,42 @@ double Option_Value::Settle_Price(const string &instr_code, LongShortType long_s
 		strike = atof(temp.c_str());
         temp = instr_code.substr(pos_first - 3, 3);
 
-		if (strcmp(temp.c_str(), "C00") == 0){ temp_param.Option_Type = 1; }
-		if (strcmp(temp.c_str(), "P00") == 0){ temp_param.Option_Type = 2; }
+        if (strcmp(temp.c_str(), "C00") == 0){ temp_param.option_type = 1; }
+        if (strcmp(temp.c_str(), "P00") == 0){ temp_param.option_type = 2; }
 
-		temp_param.Strike_Price = strike;
-		temp_param.TimeToMaturity = maturity;
+        temp_param.strike_price = strike;
+        temp_param.time_to_maturity = maturity;
 		double spread = Basis_Spread(temp_param.other_param);
-        temp_param.Volatility = (long_short == LONG_ORDER ? -1 : 1) * spread + Volatility_Adjustment(basic_vola, maturity, strike);
+        temp_param.volatility = (long_short == LONG_ORDER ? -1 : 1) * spread + Volatility_Adjustment(basic_vola, maturity, strike);
 
-		switch (temp_param.Value_Method)
+        switch (temp_param.value_method)
 		{
 		case 1: result = bls_vanila_option(temp_param); break;
 		}
 	}
     else if (strcmp(instr_code.substr(0, 2).c_str(), "IF") == 0)
 	{
-		result = Spot_Price;
+        result = spot_price;
 	}
 	else{}
 
 	return result;
 }
 
-PositionRisk Option_Value::PositionGreeks(const PositionType &Position)
+PositionRisk OptionValue::PositionGreeks(const PositionType &Position)
 {
-	pricing_param temp_param;
+    PricingParam temp_param;
 	map<string, string> update_data;
     string underlying_code=Position.underlying_code.toStdString();
     int iRet = my_redis.HGetAll(underlying_code, update_data);
-	float last_spot = atof(update_data["LastPrice"].c_str());
+    float last_spot = stof(update_data["LastPrice"]);
 
-	temp_param.Spot_Price = last_spot;
-	PositionRisk result;
-	memset(&result, 0, sizeof(PositionRisk));
-    double maturity, strike, basic_vola;
-	basic_vola = temp_param.Volatility;
+    temp_param.spot_price = last_spot;
+    PositionRisk result;
+    double maturity = 0;
+    double strike = 0;
+    double basic_vola = 0;
+
 
 	if (strcmp(Position.instr_code.toStdString().substr(0, 4).c_str(), "OTC-") == 0){
 		int l = Position.instr_code.toStdString().length();
@@ -695,32 +697,33 @@ PositionRisk Option_Value::PositionGreeks(const PositionType &Position)
         temp_param = Parameters[temp];
         param_lock.unlock();
 
-        temp_param.Spot_Price = last_spot;
+        basic_vola = temp_param.volatility;
+        temp_param.spot_price = last_spot;
 
         temp = Position.instr_code.toStdString().substr(pos_first - 3, 3);
         //European Options
-        if (strcmp(temp.c_str(), "C00") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=1;}
-        if (strcmp(temp.c_str(), "P00") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=1;}
+        if (strcmp(temp.c_str(), "C00") == 0){ temp_param.option_type = 1; temp_param.value_method=1;}
+        if (strcmp(temp.c_str(), "P00") == 0){ temp_param.option_type = 2; temp_param.value_method=1;}
 
         //American Options
-        if (strcmp(temp.c_str(), "C01") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=2;}
-        if (strcmp(temp.c_str(), "P01") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=2;}
+        if (strcmp(temp.c_str(), "C01") == 0){ temp_param.option_type = 1; temp_param.value_method=2;}
+        if (strcmp(temp.c_str(), "P01") == 0){ temp_param.option_type = 2; temp_param.value_method=2;}
 
         //Barrier Options
-//        if (strcmp(temp.c_str(), "COO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="1";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "POO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="2";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "COI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="3";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "POI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="4";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "CDO") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="5";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "PDO") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="6";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "CDI") == 0){ temp_param.Option_Type = 1; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="7";temp_param.other_param["Barrier"]=Position.Barrier}
-//        if (strcmp(temp.c_str(), "PDI") == 0){ temp_param.Option_Type = 2; temp_param.Value_Method=3;temp_param.other_param["Bar_Dir"]="8";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "COO") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="1";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "POO") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="2";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "COI") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="3";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "POI") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="4";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "CDO") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="5";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "PDO") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="6";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "CDI") == 0){ temp_param.option_type = 1; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="7";temp_param.other_param["Barrier"]=Position.Barrier}
+//        if (strcmp(temp.c_str(), "PDI") == 0){ temp_param.option_type = 2; temp_param.value_method=3;temp_param.other_param["Bar_Dir"]="8";temp_param.other_param["Barrier"]=Position.Barrier}
 
-		temp_param.Strike_Price = strike;
-		temp_param.TimeToMaturity = maturity;
-		temp_param.Volatility = Volatility_Adjustment(basic_vola, maturity, strike);
+        temp_param.strike_price = strike;
+        temp_param.time_to_maturity = maturity;
+        temp_param.volatility = Volatility_Adjustment(basic_vola, maturity, strike);
 
-		switch (temp_param.Value_Method)
+        switch (temp_param.value_method)
 		{
 		case 1:
 		{
@@ -739,31 +742,31 @@ PositionRisk Option_Value::PositionGreeks(const PositionType &Position)
 
 }
 
-double Option_Value::Price_Qoute(const string &instr_code) {
+double OptionValue::Price_Qoute(const string &instr_code) {
 	string price;
 	my_redis.HGet(main_contract.contract_code, "LastPrice", price);
 	return stod(price);
 }
 
-vector<string> Option_Value::Get_Main_Contract_Codes() {
+vector<string> OptionValue::Get_Main_Contract_Codes() {
 	vector<string> ret;
 	ret.push_back(main_contract.contract_code);
 	return ret;
 }
 
-string Option_Value::getUnderlyingCode(const string &option_code) {
+string OptionValue::getUnderlyingCode(const string &option_code) {
     string underlying_code;
     my_redis.HGet("PARAM-OTC-IFX03", "Underlying_Code", underlying_code);
     return underlying_code;
 }
 
 inline
-int Option_Value::getMultiplier(const string &instr_code) {
+int OptionValue::getMultiplier(const string &instr_code) {
     /*当前只有一个合约，暂时返回固定乘数*/
     return main_contract.multiplier;
 }
 
-double Option_Value::getUnderlyingPrice(const string &instr_code) {
+double OptionValue::getUnderlyingPrice(const string &instr_code) {
     string underlying_code = getUnderlyingCode(instr_code);
 	string str_price;
 	my_redis.HGet(underlying_code, "LastPrice", str_price);

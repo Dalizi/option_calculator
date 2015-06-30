@@ -24,11 +24,11 @@ struct Contract_Info
 	map<string,map<string, string>> Quote;
 };
 
-class Option_Value
+class OptionValue
 {
 public:
-    Option_Value(string infile_location, map<string,pricing_param> parameters);
-	~Option_Value();
+    OptionValue(string trade_date_file, const map<string,PricingParam> &parameters);
+	~OptionValue();
 
 	void Init();
 	void Start();
@@ -37,11 +37,11 @@ public:
 	void main_value_process(void * stParam);
 	void Auto_Hedger(void *stParam);
 
-    void Parameter_Setting(string param_name, pricing_param param);
-    void Parameters_Setting(map<string, pricing_param> & params);
+    void Parameter_Setting(string param_name, PricingParam param);
+    void Parameters_Setting(map<string, PricingParam> & params);
 	void Get_Parameters();
 	double Maturity_Remain(string maturity_date);
-	double Option_Valuation(pricing_param param);
+	double Option_Valuation(PricingParam param);
 	double Volatility_Adjustment(double basic_vol, double maturity, double strike);
 	double Spread_Adjustment(double maturity, double strike, map<string, double> &position);
 	double Basis_Spread(map<string, string> &basis);
@@ -50,7 +50,7 @@ public:
 	double getUnderlyingPrice(const string &instr_code);
     int getMultiplier(const string &instr_code);    //获取合约乘数
 
-	int Delta_Hedger(vector<PositionType> &Position, double Spot_Price);
+	int Delta_Hedger(vector<PositionType> &Position, double spot_price);
 	int Hedger_Excute(int net_delta, double price);
 
     double Position_Quote(const PositionType &Position);
@@ -61,8 +61,8 @@ public:
 	vector<string> Get_Main_Contract_Codes(); //Get all main contract code
 
 	vector<string> Trade_Day;
-	pricing_param value_parameter;
-    map<string,pricing_param> Parameters;
+	PricingParam value_parameter;
+    map<string,PricingParam> Parameters;
 	map<string, string> temp_param;
 	Contract_Info main_contract;
 	string Param_Key;

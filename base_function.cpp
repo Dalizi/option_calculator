@@ -41,79 +41,79 @@ double Norm_pdf(double &z)
 	return c2;
 }
 //Black-Scholes Formula for Vanila European Option
-double bls_vanila_option(pricing_param &param)
+double bls_vanila_option(PricingParam &param)
 {
-	if (param.TimeToMaturity > 0.0005)
+    if (param.time_to_maturity > 0.0005)
 	{
-		double time_sqrt = sqrt(param.TimeToMaturity);
-		double d1 = (log(param.Spot_Price / param.Strike_Price) + (param.Free_Rate - param.Yield_Rate)*param.TimeToMaturity) / (param.Volatility*time_sqrt) + 0.5*param.Volatility*time_sqrt;
-		double d2 = d1 - (param.Volatility*time_sqrt);
+        double time_sqrt = sqrt(param.time_to_maturity);
+        double d1 = (log(param.spot_price / param.strike_price) + (param.free_rate - param.yield_rate)*param.time_to_maturity) / (param.volatility*time_sqrt) + 0.5*param.volatility*time_sqrt;
+        double d2 = d1 - (param.volatility*time_sqrt);
 
-		if (param.Option_Type == 1)
+        if (param.option_type == 1)
 		{
-			return param.Spot_Price*Norm_cdf(d1)*exp(-param.Yield_Rate*param.TimeToMaturity) - param.Strike_Price*exp(-param.Free_Rate*param.TimeToMaturity)*Norm_cdf(d2);
+            return param.spot_price*Norm_cdf(d1)*exp(-param.yield_rate*param.time_to_maturity) - param.strike_price*exp(-param.free_rate*param.time_to_maturity)*Norm_cdf(d2);
 		}
-		else if (param.Option_Type == 2)
+        else if (param.option_type == 2)
 		{
-			return -param.Spot_Price*Norm_cdf(-d1)*exp(-param.Yield_Rate*param.TimeToMaturity) + param.Strike_Price*exp(-param.Free_Rate*param.TimeToMaturity)*Norm_cdf(-d2);
+            return -param.spot_price*Norm_cdf(-d1)*exp(-param.yield_rate*param.time_to_maturity) + param.strike_price*exp(-param.free_rate*param.time_to_maturity)*Norm_cdf(-d2);
 		}
 	}
 	else
 	{
-		if (param.Option_Type == 1)
+        if (param.option_type == 1)
 		{
-			return max(param.Spot_Price - param.Strike_Price,0);
+            return max(param.spot_price - param.strike_price,0);
 		}
-		else if (param.Option_Type == 2)
+        else if (param.option_type == 2)
 		{
-			return max(0,-param.Spot_Price + param.Strike_Price);
+            return max(0,-param.spot_price + param.strike_price);
 		}
 	}
 
 }
 
 //Black-Scholes Formula for Vanila European Option Delta
-double bls_vanila_delta(pricing_param &param)
+double bls_vanila_delta(PricingParam &param)
 {
 	double result = 0;
-	if (param.TimeToMaturity > 0.0005)
+    if (param.time_to_maturity > 0.0005)
 	{
-		double time_sqrt = sqrt(param.TimeToMaturity);
-		double d1 = (log(param.Spot_Price / param.Strike_Price) + (param.Free_Rate - param.Yield_Rate)*param.TimeToMaturity) / (param.Volatility*time_sqrt) + 0.5*param.Volatility*time_sqrt;
+        double time_sqrt = sqrt(param.time_to_maturity);
+        double d1 = (log(param.spot_price / param.strike_price) + (param.free_rate - param.yield_rate)*param.time_to_maturity) / (param.volatility*time_sqrt) + 0.5*param.volatility*time_sqrt;
 
-		if (param.Option_Type == 1)
+        if (param.option_type == 1)
 		{
-			result = Norm_cdf(d1)*exp(-param.Yield_Rate*param.TimeToMaturity);
+            result = Norm_cdf(d1)*exp(-param.yield_rate*param.time_to_maturity);
 		}
-		else if (param.Option_Type == 2)
+        else if (param.option_type == 2)
 		{
-			result = -Norm_cdf(-d1)*exp(-param.Yield_Rate*param.TimeToMaturity);
+            result = -Norm_cdf(-d1)*exp(-param.yield_rate*param.time_to_maturity);
 		}
 	}
 	else
 	{
-		if (param.Option_Type == 1)
+        if (param.option_type == 1)
 		{
-			result = param.Spot_Price > param.Strike_Price? 1:0;
+            result = param.spot_price > param.strike_price? 1:0;
 		}
-		else if (param.Option_Type == 2)
+        else if (param.option_type == 2)
 		{
-			result = param.Spot_Price > param.Strike_Price ? 0 : -1;
+            result = param.spot_price > param.strike_price ? 0 : -1;
 		}
 	}
 	return result;
 }
 
-double bls_vanila_gamma(pricing_param &param)
+double bls_vanila_gamma(PricingParam &param)
 {
 	double result = 0;
-	if (param.TimeToMaturity > 0.0005)
+    if (param.time_to_maturity > 0.0005)
 	{
-		double time_sqrt = sqrt(param.TimeToMaturity);
-		double d1 = (log(param.Spot_Price / param.Strike_Price) + (param.Free_Rate - param.Yield_Rate)*param.TimeToMaturity) / (param.Volatility*time_sqrt) + 0.5*param.Volatility*time_sqrt;
+        double time_sqrt = sqrt(param.time_to_maturity);
+        double d1 = (log(param.spot_price / param.strike_price) + (param.free_rate - param.yield_rate)*param.time_to_maturity) / (param.volatility*time_sqrt) + 0.5*param.volatility*time_sqrt;
 
 
-		result = Norm_pdf(d1) / (param.Spot_Price*param.Volatility*time_sqrt);
+        result = Norm_pdf(d1) / (param.spot_price*param.volatility*time_sqrt);
 	}
 	else
 	{
@@ -122,23 +122,23 @@ double bls_vanila_gamma(pricing_param &param)
 	return result;
 }
 
-double bls_vanila_theta(pricing_param &param)
+double bls_vanila_theta(PricingParam &param)
 {
 	double result = 0;
-	if (param.TimeToMaturity > 0.0005)
+    if (param.time_to_maturity > 0.0005)
 	{
-		double time_sqrt = sqrt(param.TimeToMaturity);
-		double d1 = (log(param.Spot_Price / param.Strike_Price) + (param.Free_Rate - param.Yield_Rate)*param.TimeToMaturity) / (param.Volatility*time_sqrt) + 0.5*param.Volatility*time_sqrt;
-		double d2 = d1 - (param.Volatility*time_sqrt);
+        double time_sqrt = sqrt(param.time_to_maturity);
+        double d1 = (log(param.spot_price / param.strike_price) + (param.free_rate - param.yield_rate)*param.time_to_maturity) / (param.volatility*time_sqrt) + 0.5*param.volatility*time_sqrt;
+        double d2 = d1 - (param.volatility*time_sqrt);
 
 
-		if (param.Option_Type == 1)
+        if (param.option_type == 1)
 		{
-			result = -param.Spot_Price*Norm_cdf(d1)* param.Volatility / (2 * time_sqrt) - param.Free_Rate*param.Strike_Price*exp(-param.Free_Rate*param.TimeToMaturity)*Norm_cdf(d2);
+            result = -param.spot_price*Norm_cdf(d1)* param.volatility / (2 * time_sqrt) - param.free_rate*param.strike_price*exp(-param.free_rate*param.time_to_maturity)*Norm_cdf(d2);
 		}
-		else if (param.Option_Type == 2)
+        else if (param.option_type == 2)
 		{
-			result = -param.Spot_Price*Norm_cdf(d1)* param.Volatility / (2 * time_sqrt) + param.Free_Rate*param.Strike_Price*exp(-param.Free_Rate*param.TimeToMaturity)*Norm_cdf(-d2);
+            result = -param.spot_price*Norm_cdf(d1)* param.volatility / (2 * time_sqrt) + param.free_rate*param.strike_price*exp(-param.free_rate*param.time_to_maturity)*Norm_cdf(-d2);
 		}
 	}
 	else
@@ -148,14 +148,14 @@ double bls_vanila_theta(pricing_param &param)
 	return result/256;
 }
 
-double bls_vanila_vega(pricing_param &param)
+double bls_vanila_vega(PricingParam &param)
 {
 	double result = 0;
-	if (param.TimeToMaturity > 0.0005)
+    if (param.time_to_maturity > 0.0005)
 	{
-		double time_sqrt = sqrt(param.TimeToMaturity);
-		double d1 = (log(param.Spot_Price / param.Strike_Price) + (param.Free_Rate - param.Yield_Rate)*param.TimeToMaturity) / (param.Volatility*time_sqrt) + 0.5*param.Volatility*time_sqrt;
-		result = Norm_pdf(d1) *(param.Spot_Price*time_sqrt)/100;
+        double time_sqrt = sqrt(param.time_to_maturity);
+        double d1 = (log(param.spot_price / param.strike_price) + (param.free_rate - param.yield_rate)*param.time_to_maturity) / (param.volatility*time_sqrt) + 0.5*param.volatility*time_sqrt;
+        result = Norm_pdf(d1) *(param.spot_price*time_sqrt)/100;
 	}
 	else
 	{
