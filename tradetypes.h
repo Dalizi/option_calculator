@@ -47,10 +47,10 @@ struct PositionType {
 };
 
 struct PositionRisk {
-    double delta;
-    double delta_f;
-    double gamma;
-    double vega;
-    double theta;
+    double delta = 0;
+    double delta_f = 0;
+    double gamma = 0;
+    double vega = 0;
+    double theta = 0;
 };
 #endif // TRADETYPES_H
