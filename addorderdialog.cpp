@@ -31,13 +31,13 @@ void addOrderDialog::accept() {
     TransactionType trans;
     QString instr_code = "OTC-";
     instr_code += ui->underlyingInstrTypeComboBox->currentText();
-    instr_code += 'X';
+    instr_code += 'O';
     instr_code += ui->callPutComboBox->currentText() == "Call"?'C':'P';
     instr_code += ui->optionTypeComboBox->currentText();
     instr_code += '-';
-    instr_code += ui->strikePriceLineEdit->text();
+    instr_code += ui->maturityDateEdit->date().toString("yyyy-MM-dd");
     instr_code += '-';
-    instr_code += ui->maturityDateEdit->date().toString("yyyyMMdd");
+    instr_code += ui->strikePriceLineEdit->text();
     trans.instr_code = instr_code;
     trans.client_id = ui->clientIDLineEdit->text().toInt();
     trans.price = ui->priceLineEdit->text().toDouble();
