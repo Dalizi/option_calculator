@@ -1,6 +1,5 @@
 #include "databaseaccess.h"
 
-
 #include <QDebug>
 #include <QMessageBox>
 
@@ -155,6 +154,72 @@ void DatabaseAccess::updatePosition(PositionType &pt, const TransactionType &tt)
 
 }
 
+
+
+
+vector<PositionType> DatabaseAccess::getAllPosition() {
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM positions");
+    if (!query.exec())
+        QMessageBox::warning(0, "读取所有持仓失败", query.lastError().text());
+    vector<PositionType> ret;
+    while (query.next()) {
+        PositionType position;
+        position.client_id = query.value("client_id").toInt();
+        position.instr_code = query.value("instr_code").toString();
+        position.average_price = query.value("average_price").toDouble();
+        position.total_amount = query.value("total_amount").toInt();
+        position.available_amount = query.value("available_amount").toInt();
+        position.frozen_amount = query.value("frozen_amount").toInt();
+        position.long_short = query.value("long_short").toString()=="long"?LONG_ORDER:SHORT_ORDER;
+        position.occupied_margin = query.value("occupied_margin").toDouble();
+        position.underlying_code = query.value("underlying_code").toString();
+        position.underlying_price = query.value("underlying_price").toDouble();
+        position.knockout_price= query.value("knockout_price").toDouble();
+        ret.push_back(position);
+    }
+    return ret;
+
+}
+
+void DatabaseAccess::test() {
+    QSqlQuery query(db);
+    query.prepare("SHOW GRANTS FOR current_user;");
+    if (!query.exec())
+        qDebug() << query.lastError();
+    qDebug() <<query.value(0).toString();
+}
+
+QString DatabaseAccess::genContractNum() {
+    return "test";
+}
+
+map<string, PricingParam> DatabaseAccess::getParam() {
+    map<string, PricingParam> ret;
+    QSqlQuery query(db);
+    query.prepare("SELECT * FROM param;");
+    if (!query.exec())
+        QMessageBox::warning(0, tr("Reading parameters failed"), query.lastError().text());
+    while (query.next()) {
+        PricingParam pp;
+        pp.free_rate = query.value("free_rate").toDouble();
+        pp.multiplier = query.value("multiplier").toInt();
+        pp.yield_rate = query.value("yield_rate").toDouble();
+        pp.volatility = query.value("volatility").toDouble();
+        for (auto s:vector<QString>{"basis_delta_spread", "basis_price_spread", "basis_vol_spread", "spread_type"})
+            pp.other_param[s.toStdString()] = query.value(s).toString().toStdString();
+
+//        string basis_delta_spread = query.value("basis_delta_spread").toString().toStdString();
+//        string basis_price_spread = query.value("basis_price_spread").toString().toStdString();
+//        string basis_vol_spread = query.value("basis_vol_spread").toString().toStdString();
+//        string spread_type = query.value("spread_type").toString().toStdString();
+//        pp.other_param["basis_delta_spread"]
+        ret[query.value("class_code").toString().toStdString()] = pp;
+    }
+    return ret;
+}
+
+//#Sql command
 //CREATE TABLE IF NOT EXISTS positions (
 //    client_id INT NOT NULL,
 //    instr_code VARCHAR(40) NOT NULL,
@@ -182,40 +247,19 @@ void DatabaseAccess::updatePosition(PositionType &pt, const TransactionType &tt)
 //        close_pnl DOUBLE NOT NULL,
 //        knockout_price DOUBLE NOT NULL,
 //        contract_no VARCHAR(20) NOT NULL);
+//CREATE TABLE IF NOT EXISTS param (
+//        class_code VARCHAR(10) NOT NULL PRIMARY KEY,
+//        basis_delta_spread DOUBLE NOT NULL,
+//        basis_price_spread DOUBLE NOT NULL,
+//        basis_vol_spread DOUBLE NOT NULL,
+//        free_rate DOUBLE NOT NULL,
+//        multiplier INT NOT NULL,
+//        spread_type VARCHAR(5) NOT NULL,
+//        volatility DOUBLE NOT NULL,
+//        yield_rate DOUBLE NOT NULL);
 
-vector<PositionType> DatabaseAccess::getAllPosition() {
-    QSqlQuery query(db);
-    query.prepare("SELECT * FROM positions");
-    if (!query.exec())
-        QMessageBox::warning(0, "读取所有持仓失败", query.lastError().text());
-    vector<PositionType> ret;
-    while (query.next()) {
-        PositionType position;
-        position.client_id = query.value("client_id").toInt();
-        position.instr_code = query.value("instr_code").toString();
-        position.average_price = query.value("average_price").toDouble();
-        position.total_amount = query.value("total_amount").toInt();
-        position.available_amount = query.value("available_amount").toInt();
-        position.frozen_amount = query.value("frozen_amount").toInt();
-        position.long_short = query.value("long_short").toString()=="long"?LONG_ORDER:SHORT_ORDER;
-        position.occupied_margin = query.value("occupied_margin").toDouble();
-        position.underlying_code = query.value("underlying_code ").toString();
-        position.underlying_price = query.value("underlying_price").toDouble();
-        position.knockout_price= query.value("knockout_price").toDouble();
-        ret.push_back(position);
-    }
-    return ret;
+//INSERT INTO param (class_code, basis_delta_spread, basis_price_spread, basis_vol_spread, free_rate, multiplier, spread_type, volatility, yield_rate)
+//VALUES ('SRO', 0, 0, 0.012, 0.05, 100, 'Vol', 0.4, 0);
 
-}
-
-void DatabaseAccess::test() {
-    QSqlQuery query(db);
-    query.prepare("SHOW GRANTS FOR current_user;");
-    if (!query.exec())
-        qDebug() << query.lastError();
-    qDebug() <<query.value(0).toString();
-}
-
-QString DatabaseAccess::genContractNum() {
-    return "test";
-}
+//INSERT INTO param (class_code, basis_delta_spread, basis_price_spread, basis_vol_spread, free_rate, multiplier, spread_type, volatility, yield_rate)
+//VALUES ('0MO', 0, 0, 0.012, 0.05, 100, 'Vol', 0.4, 0);

@@ -2,6 +2,7 @@
 #define DATABASEACCESS_H
 
 #include "tradetypes.h"
+#include "valuation_class.h"
 
 #include <QObject>
 #include <QSqlDatabase>
@@ -10,6 +11,7 @@
 #include <QSqlQuery>
 
 #include <vector>
+#include <string>
 
 class DatabaseAccess : public QObject
 {
@@ -27,6 +29,7 @@ public:
     void updatePosition(PositionType &pt, const TransactionType &tt);
 
     std::vector<PositionType> getAllPosition();
+    map<std::string, PricingParam> getParam();
 
     void test();
 
