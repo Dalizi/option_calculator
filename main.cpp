@@ -19,7 +19,8 @@ int main(int argc, char *argv[])
     DatabaseAccess db;
     LoginDialog login(&db);
     if (login.exec()){
-        MainWindow w(&db);
+        OptionValue calc_server("TradeDate.txt", db.getParam());
+        MainWindow w(&db, &calc_server);
         w.show();
         return a.exec();
     }
