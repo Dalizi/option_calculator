@@ -3,6 +3,7 @@
 #include "valuation_class.h"
 
 #include <QApplication>
+#include <QCoreApplication>
 #include <QPluginLoader>
 #include <QDebug>
 
@@ -14,8 +15,8 @@ string REDIS_PASSWD = "";
 
 int main(int argc, char *argv[])
 {
-
     QApplication a(argc, argv);
+    qDebug() << QCoreApplication::libraryPaths();
     DatabaseAccess db;
     LoginDialog login(&db);
     if (login.exec()){

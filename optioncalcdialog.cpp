@@ -7,10 +7,11 @@
 
 #include <base_function.h>
 
-OptionCalcDialog::OptionCalcDialog(OptionValue *calc_server, QWidget *parent) :
+OptionCalcDialog::OptionCalcDialog(OptionValue *calc_server, DatabaseAccess *db, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::OptionCalcDialog),
-    calc_server(calc_server)
+    calc_server(calc_server),
+    db(db)
 {
     ui->setupUi(this);
     init();
@@ -49,4 +50,14 @@ void OptionCalcDialog::on_pricingPushButton_clicked()
     }
     auto price = bls_vanila_option(pp);
     ui->priceLineEdit->setText(QString::number(price));
+}
+
+void OptionCalcDialog::on_getDefaultPushButton_clicked()
+{
+    auto param_map = db->getParam();
+    auto current_class = ui->classCodeComboBox->currentText().toStdString();
+    auto param = param_map[current_class];
+    ui->volatilityLineEdit->setText(QString::number(param.volatility));
+    ui->freeRateLineEdit->setText(QString::number(param.free_rate));
+    ui->yieldRateLineEdit->setText(QString::number(param.yield_rate));
 }

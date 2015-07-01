@@ -11,7 +11,7 @@ MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, QWidget *pa
     ui(new Ui::MainWindow),
     db(db),
     calc_server(calc_server),
-    opt_calc(new OptionCalcDialog(calc_server))
+    opt_calc(new OptionCalcDialog(calc_server, db))
 {
     ui->setupUi(this);
     initPositionTable();
