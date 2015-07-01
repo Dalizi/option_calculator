@@ -93,7 +93,7 @@ void MainWindow::on_refreshPushButton_clicked()
 
 void MainWindow::updateRiskInfo() {
     PositionRisk ret;
-    double pnl;
+    double pnl=0;
     auto positions = db->getAllPosition();
     for (auto p:positions) {
         auto pr = calc_server->PositionGreeks(p);
