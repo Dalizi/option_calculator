@@ -1,3 +1,4 @@
+﻿#pragma execution_character_set("utf-8")
 #include "mainwindow.h"
 #include "logindialog.h"
 #include "valuation_class.h"
@@ -30,8 +31,8 @@ int getRedisInfo() {
 
 int main(int argc, char *argv[])
 {
-    getRedisInfo();
     QApplication a(argc, argv);
+	getRedisInfo();
     qDebug() << QCoreApplication::libraryPaths();
     DatabaseAccess db;
     LoginDialog login(&db);

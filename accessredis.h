@@ -1,5 +1,6 @@
-#ifndef CACCESSREDIS_H
+﻿#ifndef CACCESSREDIS_H
 #define CACCESSREDIS_H
+
 
 #include <iostream>
 #include <string>

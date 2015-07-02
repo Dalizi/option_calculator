@@ -1,4 +1,6 @@
-#include "accessredis.h"
+﻿#include "accessredis.h"
+
+#include "..\src\Win32_Interop\win32fixes.h"
 
 #include <cstring>
 

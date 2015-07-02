@@ -6,6 +6,7 @@
 
 QT       += core gui sql
 CONFIG += c++11
+DEFINES += NOMINMAX USE_DL_PREFIX LACKS_STDLIB_H NO_QFORKIMPL WIN32_IOCP
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -45,5 +46,16 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     multi_language.qrc
 
+INCLUDEPATH += C:\Users\admin\Downloads\redis-2.8.24\redis-2.8\deps
 
-LIBS += -lhiredis
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/x64/release/ -lhiredis
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/x64/debug/ -lhiredis
+
+INCLUDEPATH += $$PWD/x64/Debug
+DEPENDPATH += $$PWD/x64/Debug
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/x64/release/ -lWin32_Interop
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/x64/debug/ -lWin32_Interop
+
+INCLUDEPATH += $$PWD/x64/Debug
+DEPENDPATH += $$PWD/x64/Debug

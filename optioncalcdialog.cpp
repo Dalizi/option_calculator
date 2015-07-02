@@ -1,3 +1,4 @@
+﻿#pragma execution_character_set("utf-8")
 #include "optioncalcdialog.h"
 #include "ui_optioncalcdialog.h"
 
@@ -5,7 +6,7 @@
 #include <QMessageBox>
 #include <QDate>
 
-#include <base_function.h>
+#include "base_function.h"
 
 OptionCalcDialog::OptionCalcDialog(OptionValue *calc_server, DatabaseAccess *db, QWidget *parent) :
     QDialog(parent),
@@ -23,9 +24,11 @@ OptionCalcDialog::~OptionCalcDialog()
 }
 
 void OptionCalcDialog::init() {
-    ui->classCodeComboBox->addItems(QStringList({"SRO", "0MO"}));
-    ui->spreadTypeComboBox->addItems(QStringList({"Val"}));
-    ui->optionTypeComboBox->addItems(QStringList({tr("Call"), tr("Put")}));
+    ui->classCodeComboBox->addItem("SRO");
+    ui->classCodeComboBox->addItem("0MO");
+    ui->spreadTypeComboBox->addItem("Val");
+    ui->optionTypeComboBox->addItem(tr("Call"));
+    ui->optionTypeComboBox->addItem(tr("Put"));
     ui->maturityDateEdit->setDate(QDate::currentDate());
     ui->maturityDateEdit->setMinimumDate(QDate::currentDate());
     ui->maturityDateEdit->setCalendarPopup(true);

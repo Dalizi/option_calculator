@@ -1,4 +1,4 @@
-#include "addorderdialog.h"
+﻿#include "addorderdialog.h"
 #include "ui_addorderdialog.h"
 #include "tradetypes.h"
 
@@ -18,10 +18,18 @@ addOrderDialog::~addOrderDialog()
 }
 
 void addOrderDialog::init() {
-    ui->underlyingInstrTypeComboBox->addItems(QStringList({"SR", "IF"}));
-    ui->callPutComboBox->addItems(QStringList({"Call", "Put"}));
-    ui->optionTypeComboBox->addItems(QStringList({"00", "01", "02", "03", "04", "05"}));
-    ui->longShortComboBox->addItems(QStringList({"Long", "Short"}));
+    ui->underlyingInstrTypeComboBox->addItem("SR");
+    ui->underlyingInstrTypeComboBox->addItem("0");
+    ui->callPutComboBox->addItem("Call");
+    ui->callPutComboBox->addItem("Put");
+    ui->optionTypeComboBox->addItem("00");
+    ui->optionTypeComboBox->addItem("01");
+    ui->optionTypeComboBox->addItem("02");
+    ui->optionTypeComboBox->addItem("03");
+    ui->optionTypeComboBox->addItem("04");
+    ui->optionTypeComboBox->addItem("05");
+    ui->longShortComboBox->addItem("Long");
+    ui->longShortComboBox->addItem("Short");
     ui->maturityDateEdit->setDate(QDate::currentDate());
     ui->maturityDateEdit->setMinimumDate(QDate::currentDate());
     ui->maturityDateEdit->setCalendarPopup(true);

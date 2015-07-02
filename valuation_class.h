@@ -1,4 +1,4 @@
-#ifndef VALUATION_CLASS_H_
+﻿#ifndef VALUATION_CLASS_H_
 #define VALUATION_CLASS_H_
 
 #include <string>
@@ -9,7 +9,6 @@
 #include <thread>
 #include <mutex>
 #include "tradetypes.h"
-#include <unistd.h>
 #include <map>
 
 #include <QObject>
