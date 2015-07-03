@@ -6,12 +6,13 @@
 
 #include <QMessageBox>
 
-MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, QWidget *parent) :
+MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, CAccessRedis *redis, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     db(db),
     calc_server(calc_server),
-    opt_calc(new OptionCalcDialog(calc_server, db))
+    opt_calc(new OptionCalcDialog(calc_server, db)),
+    redis(redis)
 {
     ui->setupUi(this);
     initPositionTable();
@@ -52,7 +53,7 @@ void MainWindow::initPositionTable() {
 
 void MainWindow::onOrderPlaceMenuTriggered(QAction *action) {
     if (action == ui->orderPlaceAction) {
-        auto opd = new addOrderDialog(db, this);
+        auto opd = new addOrderDialog(db, redis, this);
         opd->show();
     }
 }

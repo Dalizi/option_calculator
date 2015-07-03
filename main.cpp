@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     if (login.exec()){
         OptionValue calc_server("TradeDate.txt", &redis, db.getParam());
 
-        MainWindow w(&db, &calc_server);
+        MainWindow w(&db, &calc_server, &redis);
         w.show();
         return a.exec();
     }
