@@ -8,8 +8,8 @@ using namespace std;
 DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 {
     db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("localhost");
-    db.setPort(3309);  //设置端口
+    db.setHostName("10.2.6.31");
+    db.setPort(3306);  //设置端口
     db.setDatabaseName("sugar_opt");  //设置数据库名称
     connect(this, SIGNAL(transactionWritten(TransactionType)), this, SLOT(writePosition(TransactionType)));
 }
