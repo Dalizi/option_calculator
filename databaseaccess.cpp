@@ -5,21 +5,32 @@
 
 #include <sstream>
 #include <iomanip>
+#include <fstream>
 
 using namespace std;
 
 DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 {
     db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("localhost");
-    db.setPort(3306);  //设置端口
-    db.setDatabaseName("sugar_opt");  //设置数据库名称
+    loadConfig("mysql_config.ini");
     connect(this, SIGNAL(transactionWritten(TransactionType)), this, SLOT(writePosition(TransactionType)));
 }
 
 void DatabaseAccess::setLoginInfo(const QString &user_name, const QString &password) {
     db.setUserName(user_name);  //设置用户名
     db.setPassword(password);  //设置密码
+}
+
+void DatabaseAccess::loadConfig(const string &configFile) {
+    ifstream mysql_info(configFile);
+    if (!mysql_info.is_open()) {
+        QMessageBox::warning(0, "Warning", "读取sql数据库连接配置文件失败。");
+        exit(1);
+    }
+    string line;
+    if (getline(mysql_info, line)) db.setHostName(QString::fromStdString(line));
+    if (getline(mysql_info, line)) db.setPort(stod(line));
+    if (getline(mysql_info, line)) db.setDatabaseName(QString::fromStdString(line));
 }
 
 bool DatabaseAccess::writeTransaction(TransactionType trans) {
@@ -184,14 +195,6 @@ vector<PositionType> DatabaseAccess::getAllPosition(const QString &instr_type) {
     }
     return ret;
 
-}
-
-void DatabaseAccess::test() {
-    QSqlQuery query(db);
-    query.prepare("SHOW GRANTS FOR current_user;");
-    if (!query.exec())
-        qDebug() << query.lastError();
-    qDebug() <<query.value(0).toString();
 }
 
 QString DatabaseAccess::genContractNum(int client_id) {
