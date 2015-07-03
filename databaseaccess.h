@@ -31,7 +31,8 @@ public:
     std::vector<PositionType> getAllPosition(const QString &instr_type);
     map<std::string, PricingParam> getParam();
 
-    void test();
+private:
+    void loadConfig(const std::string &configFile);
 
 signals:
     void transactionWritten(TransactionType trans);
