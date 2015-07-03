@@ -72,7 +72,7 @@ void MainWindow::onOrderPlaceMenuTriggered(QAction *action) {
 
 void MainWindow::onTransactionMenuTriggered(QAction *action) {
     if (action == ui->transactionQueryAction) {
-        auto tvd = new transactionViewDialog(db);
+        auto tvd = new transactionViewDialog(db, this);
         tvd->show();
     }
 }
