@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "logindialog.h"
 #include "valuation_class.h"
+#include "accessredis.h"
 
 #include <fstream>
 
@@ -28,15 +29,29 @@ int getRedisInfo() {
     if (getline(redis_info, line)) REDIS_PASSWD = line;
 }
 
+int initRedis(CAccessRedis *my_redis) {
+    int iRet = my_redis->Connect(REDIS_ADDR, REDIS_PORT, REDIS_PASSWD);
+    //int iRet = my_redis.Connect("127.0.0.1", 6379);
+    if (iRet != 0) {
+        stringstream ss;
+        ss << "Redis Error: " <<iRet;
+        QMessageBox::about(0, "ERROR", QString::fromStdString(ss.str()));
+        exit(1);
+    }
+    cout<<"REDIS数据库已连接!"<<endl;
+    my_redis->Select(0);
+}
+
 int main(int argc, char *argv[])
 {
     getRedisInfo();
     QApplication a(argc, argv);
-    qDebug() << QCoreApplication::libraryPaths();
     DatabaseAccess db;
+    CAccessRedis redis;
+    initRedis(&redis);
     LoginDialog login(&db);
     if (login.exec()){
-        OptionValue calc_server("TradeDate.txt", db.getParam());
+        OptionValue calc_server("TradeDate.txt", &redis, db.getParam());
 
         MainWindow w(&db, &calc_server);
         w.show();
