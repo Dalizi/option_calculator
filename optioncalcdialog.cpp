@@ -49,6 +49,7 @@ void OptionCalcDialog::on_pricingPushButton_clicked()
     }
     auto price = bls_vanila_option(pp);
     ui->priceLineEdit->setText(QString::number(price));
+    ui->relativePriceLineEdit->setText(QString::number(price/pp.spot_price));
 }
 
 void OptionCalcDialog::on_getDefaultPushButton_clicked()

@@ -14,21 +14,7 @@
    <string>Option Pricing</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="5">
-    <widget class="QPushButton" name="pushButton_2">
-     <property name="text">
-      <string>Set as default</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="4">
-    <widget class="QPushButton" name="pricingPushButton">
-     <property name="text">
-      <string>Pricing</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="6">
+   <item row="0" column="0" colspan="5">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Parameters</string>
@@ -125,21 +111,21 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="priceLineEdit">
-     <property name="readOnly">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="priceTextLabel">
+   <item row="1" column="3">
+    <widget class="QPushButton" name="pricingPushButton">
      <property name="text">
-      <string>Price:</string>
+      <string>Pricing</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="2">
+   <item row="1" column="4">
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="text">
+      <string>Set as default</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -152,12 +138,44 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="3">
+   <item row="1" column="2">
     <widget class="QPushButton" name="getDefaultPushButton">
      <property name="text">
       <string>Get default values</string>
      </property>
     </widget>
+   </item>
+   <item row="1" column="0">
+    <layout class="QFormLayout" name="formLayout_3">
+     <item row="0" column="0">
+      <widget class="QLabel" name="priceLabel">
+       <property name="text">
+        <string>Price</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="priceLineEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="relativePriceLabel">
+       <property name="text">
+        <string>Relative Price</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="relativePriceLineEdit">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
