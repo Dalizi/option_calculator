@@ -18,7 +18,7 @@ class DatabaseAccess : public QObject
     Q_OBJECT
     QSqlDatabase db;
 
-    QString genContractNum();
+    QString genContractNum(int client_id);
 public:
     explicit DatabaseAccess(QObject *parent = 0);
     void setLoginInfo(const QString &user_name, const QString &password);
