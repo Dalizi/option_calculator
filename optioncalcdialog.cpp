@@ -37,7 +37,8 @@ void OptionCalcDialog::init() {
 void OptionCalcDialog::on_pricingPushButton_clicked()
 {
     PricingParam pp;
-    bool ok2, ok3, ok4, ok5;
+    bool ok1, ok2, ok3, ok4, ok5;
+    pp.free_rate = ui->freeRateLineEdit->text().toDouble(&ok1);
     pp.option_type = ui->optionTypeComboBox->currentText() == "Call"? 1:2;
     pp.yield_rate = ui->yieldRateLineEdit->text().toDouble(&ok2);
     pp.volatility = ui->volatilityLineEdit->text().toDouble(&ok3);
@@ -46,7 +47,7 @@ void OptionCalcDialog::on_pricingPushButton_clicked()
     pp.spot_price = ui->spotPriceLineEdit->text().toDouble(&ok4);
     pp.strike_price = ui->strikePriceLineEdit->text().toDouble(&ok5);
 
-    if (!(ok2 && ok3 && ok4 && ok5)){
+    if (!(ok1 && ok2 && ok3 && ok4 && ok5)){
         QMessageBox::warning(this, "Pricing Failed", "Missing or invalid input in required fields.");
         return;
     }
