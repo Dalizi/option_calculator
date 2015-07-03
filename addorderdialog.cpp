@@ -2,10 +2,13 @@
 #include "ui_addorderdialog.h"
 #include "tradetypes.h"
 
-addOrderDialog::addOrderDialog(DatabaseAccess *db, QWidget *parent) :
+#include <QMessageBox>
+
+addOrderDialog::addOrderDialog(DatabaseAccess *db, CAccessRedis *redis, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addOrderDialog),
-    db(db)
+    db(db),
+    redis(redis)
 {
     ui->setupUi(this);
     connect(this, SIGNAL(accepted()), parent, SLOT(onTransactionWritten()));
@@ -54,6 +57,12 @@ void addOrderDialog::accept() {
     trans.underlying_code = ui->underlyingCodeLineEdit->text();
     trans.underlying_price = ui->underlyingPriceLineEdit->text().toDouble();
     trans.knockout_price = ui->kickOutPriceLineEdit->text().toDouble();
-    if (db->writeTransaction(trans))
+    bool isUnderlyingCodeExists;
+    redis->Exists(trans.underlying_code.toStdString(), isUnderlyingCodeExists);
+    if (!isUnderlyingCodeExists) {
+        QMessageBox::warning(this, "Error", "Underlying code doesn't exist.");
+        return;
+    }
+    if (db->writeTransaction(trans) && isUnderlyingCodeExists)
         QDialog::accept();
 }

@@ -6,15 +6,30 @@
 
 #include <QMessageBox>
 
-MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, QWidget *parent) :
+MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, CAccessRedis *redis, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     db(db),
     calc_server(calc_server),
-    opt_calc(new OptionCalcDialog(calc_server, db))
+    opt_calc(new OptionCalcDialog(calc_server, db)),
+    redis(redis),
+    model(new QSqlTableModel(this, db->getDatabase()))
 {
     ui->setupUi(this);
-    initPositionTable();
+    init();
+
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+    delete opt_calc;
+}
+
+void MainWindow::init() {
+    ui->optionClassComboBox->addItem("SRO");
+    ui->optionClassComboBox->addItem("0MO");
+    //initPositionTable();
     updateRiskInfo();
     QAction *deleteAction = new QAction("Delte record", 0);
     ui->positionTableView->addAction(deleteAction);
@@ -25,41 +40,39 @@ MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, QWidget *pa
     connect(ui->optionPricingAction, SIGNAL(triggered()), opt_calc, SLOT(show()));
 }
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-    delete opt_calc;
-}
-
-void MainWindow::initPositionTable() {
-    model = new QSqlTableModel(this, db->getDatabase());
-    model->setTable("positions");
-    model->select();
-    model->setHeaderData(0, Qt::Horizontal, tr("Client ID"));
-    model->setHeaderData(1, Qt::Horizontal, tr("Instrument Code"));
-    model->setHeaderData(2, Qt::Horizontal, tr("Average Price"));
-    model->setHeaderData(3, Qt::Horizontal, tr("Total Amount"));
-    model->setHeaderData(4, Qt::Horizontal, tr("Availabel Amount"));
-    model->setHeaderData(5, Qt::Horizontal, tr("Frozen Amount"));
-    model->setHeaderData(6, Qt::Horizontal, tr("Long Short"));
-    model->setHeaderData(7, Qt::Horizontal, tr("Underlying Price"));
-    model->setHeaderData(8, Qt::Horizontal, tr("Occupied Margin"));
-    model->setHeaderData(9, Qt::Horizontal, tr("Underlying Code"));
-    model->setHeaderData(10, Qt::Horizontal, tr("Knock Out Price"));
-    model->setHeaderData(11, Qt::Horizontal, tr("Contract NO."));
-    ui->positionTableView->setModel(model);
-}
+//void MainWindow::initPositionTable() {
+//    model = new QSqlTableModel(this, db->getDatabase());
+//    model->setTable("positions");
+//    model->select();
+//    QString filterText = "instr_code LIKE OTC-";
+//    filterText += ui->optionClassComboBox->currentText();
+//    filterText += '%';
+//    model->setFilter(filterText);
+//    model->setHeaderData(0, Qt::Horizontal, tr("Client ID"));
+//    model->setHeaderData(1, Qt::Horizontal, tr("Instrument Code"));
+//    model->setHeaderData(2, Qt::Horizontal, tr("Average Price"));
+//    model->setHeaderData(3, Qt::Horizontal, tr("Total Amount"));
+//    model->setHeaderData(4, Qt::Horizontal, tr("Availabel Amount"));
+//    model->setHeaderData(5, Qt::Horizontal, tr("Frozen Amount"));
+//    model->setHeaderData(6, Qt::Horizontal, tr("Long Short"));
+//    model->setHeaderData(7, Qt::Horizontal, tr("Underlying Price"));
+//    model->setHeaderData(8, Qt::Horizontal, tr("Occupied Margin"));
+//    model->setHeaderData(9, Qt::Horizontal, tr("Underlying Code"));
+//    model->setHeaderData(10, Qt::Horizontal, tr("Knock Out Price"));
+//    model->setHeaderData(11, Qt::Horizontal, tr("Contract NO."));
+//    ui->positionTableView->setModel(model);
+//}
 
 void MainWindow::onOrderPlaceMenuTriggered(QAction *action) {
     if (action == ui->orderPlaceAction) {
-        auto opd = new addOrderDialog(db, this);
+        auto opd = new addOrderDialog(db, redis, this);
         opd->show();
     }
 }
 
 void MainWindow::onTransactionMenuTriggered(QAction *action) {
     if (action == ui->transactionQueryAction) {
-        auto tvd = new transactionViewDialog(db);
+        auto tvd = new transactionViewDialog(db, this);
         tvd->show();
     }
 }
@@ -94,7 +107,7 @@ void MainWindow::on_refreshPushButton_clicked()
 void MainWindow::updateRiskInfo() {
     PositionRisk ret;
     double pnl=0;
-    auto positions = db->getAllPosition();
+    auto positions = db->getAllPosition(ui->optionClassComboBox->currentText());
     for (auto p:positions) {
         auto pr = calc_server->PositionGreeks(p);
         pnl += calc_server->Position_PnL(p, false);
@@ -110,4 +123,27 @@ void MainWindow::updateRiskInfo() {
     ui->thetaLineEdit->setText(QString::number(ret.theta));
     ui->vegaLineEdit->setText(QString::number(ret.vega));
     ui->pnlLineEdit->setText(QString::number(pnl));
+}
+
+void MainWindow::on_optionClassComboBox_currentTextChanged(const QString &arg1)
+{
+    model->setTable("positions");
+    QString filterText = "instr_code LIKE 'OTC-";
+    filterText += arg1;
+    filterText += "%'";
+    model->setFilter(filterText);
+    model->select();
+    model->setHeaderData(0, Qt::Horizontal, tr("Client ID"));
+    model->setHeaderData(1, Qt::Horizontal, tr("Instrument Code"));
+    model->setHeaderData(2, Qt::Horizontal, tr("Average Price"));
+    model->setHeaderData(3, Qt::Horizontal, tr("Total Amount"));
+    model->setHeaderData(4, Qt::Horizontal, tr("Availabel Amount"));
+    model->setHeaderData(5, Qt::Horizontal, tr("Frozen Amount"));
+    model->setHeaderData(6, Qt::Horizontal, tr("Long Short"));
+    model->setHeaderData(7, Qt::Horizontal, tr("Underlying Price"));
+    model->setHeaderData(8, Qt::Horizontal, tr("Occupied Margin"));
+    model->setHeaderData(9, Qt::Horizontal, tr("Underlying Code"));
+    model->setHeaderData(10, Qt::Horizontal, tr("Knock Out Price"));
+    model->setHeaderData(11, Qt::Horizontal, tr("Contract NO."));
+    ui->positionTableView->setModel(model);
 }

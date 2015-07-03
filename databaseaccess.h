@@ -18,7 +18,7 @@ class DatabaseAccess : public QObject
     Q_OBJECT
     QSqlDatabase db;
 
-    QString genContractNum();
+    QString genContractNum(int client_id);
 public:
     explicit DatabaseAccess(QObject *parent = 0);
     void setLoginInfo(const QString &user_name, const QString &password);
@@ -28,7 +28,7 @@ public:
     bool writeTransaction(TransactionType trans_type);
     void updatePosition(PositionType &pt, const TransactionType &tt);
 
-    std::vector<PositionType> getAllPosition();
+    std::vector<PositionType> getAllPosition(const QString &instr_type);
     map<std::string, PricingParam> getParam();
 
     void test();

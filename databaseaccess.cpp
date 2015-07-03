@@ -4,12 +4,15 @@
 #include <QDebug>
 #include <QMessageBox>
 
+#include <sstream>
+#include <iomanip>
+
 using namespace std;
 
 DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 {
     db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("10.2.6.31");
+    db.setHostName("localhost");
     db.setPort(3306);  //设置端口
     db.setDatabaseName("sugar_opt");  //设置数据库名称
     connect(this, SIGNAL(transactionWritten(TransactionType)), this, SLOT(writePosition(TransactionType)));
@@ -22,7 +25,7 @@ void DatabaseAccess::setLoginInfo(const QString &user_name, const QString &passw
 
 bool DatabaseAccess::writeTransaction(TransactionType trans) {
     QSqlQuery query(db);
-    trans.contract_no = genContractNum();
+    trans.contract_no = genContractNum(trans.client_id);
     query.prepare("INSERT INTO transactions (client_id, instr_code, price, amount, long_short, open_offset, underlying_price, underlying_code, close_pnl, knockout_price, contract_no)"
                   " VALUES(:client_id, :instr_code, :price, :amount, :long_short, :open_offset, :underlying_price, :underlying_code, :close_pnl, :knockout_price, :contract_no);");
     query.bindValue(":client_id", trans.client_id);
@@ -158,11 +161,12 @@ void DatabaseAccess::updatePosition(PositionType &pt, const TransactionType &tt)
 
 
 
-vector<PositionType> DatabaseAccess::getAllPosition() {
+vector<PositionType> DatabaseAccess::getAllPosition(const QString &instr_type) {
     QSqlQuery query(db);
-    query.prepare("SELECT * FROM positions");
+    query.prepare("SELECT * FROM positions WHERE instr_code LIKE 'OTC-"+instr_type+"%'");
     if (!query.exec())
         QMessageBox::warning(0, "读取所有持仓失败", query.lastError().text());
+    qDebug() <<query.lastQuery();
     vector<PositionType> ret;
     while (query.next()) {
         PositionType position;
@@ -191,8 +195,20 @@ void DatabaseAccess::test() {
     qDebug() <<query.value(0).toString();
 }
 
-QString DatabaseAccess::genContractNum() {
-    return "test";
+QString DatabaseAccess::genContractNum(int client_id) {
+    QSqlQuery query(db);
+    query.prepare("SELECT count(*) from transactions WHERE client_id=?");
+    query.addBindValue(client_id);
+    if (!query.exec()) {
+        QMessageBox::warning(0, tr("Getting transaction count failed"), query.lastError().text());
+    }
+    string count;
+    if (query.next())
+        count = query.value(0).toString().toStdString();
+    stringstream ss;
+    ss << setw(6) <<setfill('0') <<client_id;
+    ss << setw(10) <<setfill('0') <<count;
+    return QString::fromStdString(ss.str());
 }
 
 map<string, PricingParam> DatabaseAccess::getParam() {

@@ -31,6 +31,8 @@ public:
     // select 选择数据库
     int Select(int iIndex);
 
+    int Exists(const string &key, bool &ret);
+
     // set 创建或设置值
     int Set(const string& strKey,const string& strVal);
 

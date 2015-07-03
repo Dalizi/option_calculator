@@ -64,6 +64,7 @@ int CAccessRedis::Set(const string& strKey,const string& strVal)
     return CommitNoRetCommond(ss.str());
 }
 
+
 // get
 int CAccessRedis::Get(const string&key,vector<string> &vec)
 {
@@ -72,6 +73,15 @@ int CAccessRedis::Get(const string&key,vector<string> &vec)
 
     ss<<"get "<<key;
     return CommitHaveRetCommond(ss.str(),vec);
+}
+
+int CAccessRedis::Exists(const string &key, bool &val) {
+    stringstream ss;
+    ss <<"exists " <<key;
+    vector<string> vec;
+    int ret= CommitHaveRetCommond(ss.str(), vec);
+    val = (vec[0] == "1");
+    return ret;
 }
 
 // del
