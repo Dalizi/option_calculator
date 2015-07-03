@@ -19,7 +19,7 @@ addOrderDialog::~addOrderDialog()
 
 void addOrderDialog::init() {
     ui->underlyingInstrTypeComboBox->addItem("SR");
-    ui->underlyingInstrTypeComboBox->addItem("0");
+    ui->underlyingInstrTypeComboBox->addItem("0M");
     ui->callPutComboBox->addItem("Call");
     ui->callPutComboBox->addItem("Put");
     ui->optionTypeComboBox->addItem("00");
