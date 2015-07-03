@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Transaction Query</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -26,9 +26,29 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="chooseClientComboBox"/>
+        <widget class="QLineEdit" name="chooseClientLineEdit"/>
        </item>
       </layout>
+     </item>
+     <item>
+      <widget class="QPushButton" name="queryPushButton">
+       <property name="text">
+        <string>Query</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <spacer name="horizontalSpacer">
