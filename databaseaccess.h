@@ -28,7 +28,7 @@ public:
     bool writeTransaction(TransactionType trans_type);
     void updatePosition(PositionType &pt, const TransactionType &tt);
 
-    std::vector<PositionType> getAllPosition();
+    std::vector<PositionType> getAllPosition(const QString &instr_type);
     map<std::string, PricingParam> getParam();
 
     void test();

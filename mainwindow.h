@@ -28,7 +28,8 @@ private:
     OptionCalcDialog *opt_calc;
     CAccessRedis *redis;
 
-    void initPositionTable();
+    void init();
+   // void initPositionTable();
     void updateRiskInfo();
 
 public slots:
@@ -42,6 +43,7 @@ private slots:
     void onRevertButtonClicked();
     void on_savePushButton_clicked();
     void on_refreshPushButton_clicked();
+    void on_optionClassComboBox_currentTextChanged(const QString &arg1);
 };
 
 #endif // MAINWINDOW_H

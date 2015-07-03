@@ -160,11 +160,12 @@ void DatabaseAccess::updatePosition(PositionType &pt, const TransactionType &tt)
 
 
 
-vector<PositionType> DatabaseAccess::getAllPosition() {
+vector<PositionType> DatabaseAccess::getAllPosition(const QString &instr_type) {
     QSqlQuery query(db);
-    query.prepare("SELECT * FROM positions");
+    query.prepare("SELECT * FROM positions WHERE instr_code LIKE 'OTC-"+instr_type+"%'");
     if (!query.exec())
         QMessageBox::warning(0, "读取所有持仓失败", query.lastError().text());
+    qDebug() <<query.lastQuery();
     vector<PositionType> ret;
     while (query.next()) {
         PositionType position;
