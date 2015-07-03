@@ -18,7 +18,7 @@ addOrderDialog::~addOrderDialog()
 }
 
 void addOrderDialog::init() {
-    ui->underlyingInstrTypeComboBox->addItems(QStringList({"SR", "IF"}));
+    ui->underlyingInstrTypeComboBox->addItems(QStringList({"SR", "0M"}));
     ui->callPutComboBox->addItems(QStringList({"Call", "Put"}));
     ui->optionTypeComboBox->addItems(QStringList({"00", "01", "02", "03", "04", "05"}));
     ui->longShortComboBox->addItems(QStringList({"Long", "Short"}));
