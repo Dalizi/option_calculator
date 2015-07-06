@@ -20,7 +20,7 @@ string REDIS_PASSWD = "";
 int getRedisInfo() {
     ifstream redis_info("redis_info.ini");
     if (!redis_info.is_open()) {
-        QMessageBox::warning(0, "Warning", "读取redis连接配置文件失败。");
+        QMessageBox::warning(0, tr("Warning"), tr("Loading redis info failed"));
         exit(1);
     }
     string line;
@@ -32,14 +32,12 @@ int getRedisInfo() {
 
 int initRedis(CAccessRedis *my_redis) {
     int iRet = my_redis->Connect(REDIS_ADDR, REDIS_PORT, REDIS_PASSWD);
-    //int iRet = my_redis.Connect("127.0.0.1", 6379);
     if (iRet != 0) {
         stringstream ss;
         ss << "Redis Error: " <<iRet;
-        QMessageBox::about(0, "ERROR", QString::fromStdString(ss.str()));
+        QMessageBox::about(0, tr("Error"), QString::fromStdString(ss.str()));
         exit(1);
     }
-    cout<<"REDIS数据库已连接!"<<endl;
     my_redis->Select(0);
 }
 
