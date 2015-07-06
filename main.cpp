@@ -10,6 +10,7 @@
 #include <QPluginLoader>
 #include <QMessageBox>
 #include <QDebug>
+#include <QObject>
 
 using namespace std;
 
@@ -20,7 +21,7 @@ string REDIS_PASSWD = "";
 int getRedisInfo() {
     ifstream redis_info("redis_info.ini");
     if (!redis_info.is_open()) {
-        QMessageBox::warning(0, tr("Warning"), tr("Loading redis info failed"));
+        QMessageBox::warning(0, QObject::tr("Warning"), QObject::tr("Loading redis info failed"));
         exit(1);
     }
     string line;
@@ -35,7 +36,7 @@ int initRedis(CAccessRedis *my_redis) {
     if (iRet != 0) {
         stringstream ss;
         ss << "Redis Error: " <<iRet;
-        QMessageBox::about(0, tr("Error"), QString::fromStdString(ss.str()));
+        QMessageBox::about(0, QObject::tr("Error"), QString::fromStdString(ss.str()));
         exit(1);
     }
     my_redis->Select(0);
