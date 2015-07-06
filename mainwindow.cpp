@@ -27,8 +27,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::init() {
-    ui->optionClassComboBox->addItem("SRO");
-    ui->optionClassComboBox->addItem("0MO");
+    ui->optionClassComboBox->addItems(db->getAllClassCode());
     //initPositionTable();
     updateRiskInfo();
     QAction *deleteAction = new QAction("Delte record", 0);

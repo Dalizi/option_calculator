@@ -21,7 +21,7 @@ addOrderDialog::~addOrderDialog()
 }
 
 void addOrderDialog::init() {
-    ui->underlyingInstrTypeComboBox->addItems(QStringList({"SR", "0M"}));
+    ui->underlyingInstrTypeComboBox->addItems(db->getAllClassCode());
     ui->callPutComboBox->addItems(QStringList({"Call", "Put"}));
     ui->optionTypeComboBox->addItems(QStringList({"00", "01", "02", "03", "04", "05"}));
     ui->longShortComboBox->addItems(QStringList({"Long", "Short"}));
@@ -34,7 +34,6 @@ void addOrderDialog::accept() {
     TransactionType trans;
     QString instr_code = "OTC-";
     instr_code += ui->underlyingInstrTypeComboBox->currentText();
-    instr_code += 'O';
     instr_code += ui->callPutComboBox->currentText() == "Call"?'C':'P';
     instr_code += ui->optionTypeComboBox->currentText();
     instr_code += '-';

@@ -176,7 +176,6 @@ vector<PositionType> DatabaseAccess::getAllPosition(const QString &instr_type) {
     query.prepare("SELECT * FROM positions WHERE instr_code LIKE 'OTC-"+instr_type+"%'");
     if (!query.exec())
         QMessageBox::warning(0, "读取所有持仓失败", query.lastError().text());
-    qDebug() <<query.lastQuery();
     vector<PositionType> ret;
     while (query.next()) {
         PositionType position;
@@ -235,6 +234,17 @@ map<string, PricingParam> DatabaseAccess::getParam() {
 //        pp.other_param["basis_delta_spread"]
         ret[query.value("class_code").toString().toStdString()] = pp;
     }
+    return ret;
+}
+
+QStringList DatabaseAccess::getAllClassCode() {
+    QStringList ret;
+    QSqlQuery query(db);
+    query.prepare("SELECT class_code FROM param;");
+    if (!query.exec())
+        QMessageBox::warning(0, tr("Reading class code failed"), query.lastError().text());
+    while (query.next())
+        ret.push_back(query.value(0).toString());
     return ret;
 }
 
