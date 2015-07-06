@@ -25,7 +25,7 @@ void LoginDialog::accept() {
         QDialog::accept();
     else {
         QMessageBox::warning(this, "连接数据库失败", db->lastError());
-        QDialog::reject();
+        ui->passwordLineEdit->clear();
     }
 
 }
