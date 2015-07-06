@@ -32,9 +32,12 @@ public:
     std::vector<PositionType> getAllPosition(const QString &instr_type);
     std::map<std::string, PricingParam> getParam();
     QStringList getAllClassCode();
+    bool setPassword(const QString new_passwd, const QString old_password);
 
 private:
     void loadConfig(const std::string &configFile);
+    QString username;
+    QString password;
 
 signals:
     void transactionWritten(TransactionType trans);

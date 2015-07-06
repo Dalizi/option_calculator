@@ -19,6 +19,8 @@ DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 void DatabaseAccess::setLoginInfo(const QString &user_name, const QString &password) {
     db.setUserName(user_name);  //设置用户名
     db.setPassword(password);  //设置密码
+    username=user_name;
+    this->password = password;
 }
 
 void DatabaseAccess::loadConfig(const string &configFile) {
@@ -246,6 +248,20 @@ QStringList DatabaseAccess::getAllClassCode() {
     while (query.next())
         ret.push_back(query.value(0).toString());
     return ret;
+}
+
+bool DatabaseAccess::setPassword(const QString new_passwd, const QString old_password) {
+    if (old_password!= password) {
+        QMessageBox::warning(0, tr("Error"), tr("Incorrect old password."));
+        return false;
+    }
+    QSqlQuery query(db);
+    query.prepare("SET PASSWORD = PASSWORD('" + new_passwd + "')");
+    if (!query.exec()) {
+        QMessageBox::warning(0, tr("Error"), tr("Resetting password failed."));
+        return false;
+    }
+    return true;
 }
 
 //#Sql command
