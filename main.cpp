@@ -27,6 +27,7 @@ int getRedisInfo() {
     if (getline(redis_info, line)) REDIS_ADDR = line;
     if (getline(redis_info, line)) REDIS_PORT = stod(line);
     if (getline(redis_info, line)) REDIS_PASSWD = line;
+    return 0;
 }
 
 int initRedis(CAccessRedis *my_redis) {
