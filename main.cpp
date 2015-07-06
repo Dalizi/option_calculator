@@ -44,10 +44,10 @@ int initRedis(CAccessRedis *my_redis) {
 
 int main(int argc, char *argv[])
 {
-    getRedisInfo();
     QApplication a(argc, argv);
     DatabaseAccess db;
     CAccessRedis redis;
+    getRedisInfo();
     initRedis(&redis);
     LoginDialog login(&db);
     if (login.exec()){
