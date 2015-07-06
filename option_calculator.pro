@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     accessredis.cpp \
     base_function.cpp \
     optioncalcdialog.cpp \
-    positiontablemodel.cpp
+    positiontablemodel.cpp \
+    adduserdialog.cpp \
+    resetpassworddialog.cpp
 
 HEADERS  += mainwindow.h \
     databaseaccess.h \
@@ -36,13 +38,17 @@ HEADERS  += mainwindow.h \
     valuation_class.h \
     accessredis.h \
     optioncalcdialog.h \
-    positiontablemodel.h
+    positiontablemodel.h \
+    adduserdialog.h \
+    resetpassworddialog.h
 
 FORMS    += mainwindow.ui \
     logindialog.ui \
     addorderdialog.ui \
     transactionviewdialog.ui \
-    optioncalcdialog.ui
+    optioncalcdialog.ui \
+    adduserdialog.ui \
+    resetpassworddialog.ui
 
 RESOURCES += \
     multi_language.qrc
