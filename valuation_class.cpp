@@ -10,7 +10,7 @@ extern string REDIS_ADDR;
 extern int REDIS_PORT;
 extern string REDIS_PASSWD;
 
-OptionValue::OptionValue(string trade_date_file, const map<string,PricingParam> &parameters)
+OptionValue::OptionValue(string trade_date_file, CAccessRedis *redis, const map<string,PricingParam> &parameters):my_redis(redis)
 {
     ifstream in_file(trade_date_file);
 
@@ -25,17 +25,6 @@ OptionValue::OptionValue(string trade_date_file, const map<string,PricingParam> 
     }
 
     Parameters=parameters;
-    int iRet = my_redis.Connect(REDIS_ADDR, REDIS_PORT, REDIS_PASSWD);
-    //int iRet = my_redis.Connect("127.0.0.1", 6379);
-    if (iRet != 0) {
-        stringstream ss;
-        ss << "Redis Error: " <<iRet;
-        QMessageBox::about(0, "ERROR", QString::fromStdString(ss.str()));
-        exit(1);
-    }
-	cout<<"REDIS数据库已连接!"<<endl;
-	my_redis.Select(0);
-
 	return;
 }
 
@@ -114,7 +103,7 @@ void OptionValue::Parameters_Setting(map<string, PricingParam> & params)
 void OptionValue::Get_Parameters()
 {
 	int iRet;
-	iRet=my_redis.HGetAll(Param_Key, temp_param);
+    iRet=my_redis->HGetAll(Param_Key, temp_param);
     //Get All Parameters from DB file
     //Transform to
 	return;
@@ -336,7 +325,7 @@ double OptionValue::Position_PnL(PositionType Position, bool isMain)
     PricingParam temp_param;
     map<string, string> update_data;
     string underlying_code=Position.underlying_code.toStdString();
-    int iRet = my_redis.HGetAll(underlying_code, update_data);
+    int iRet = my_redis->HGetAll(underlying_code, update_data);
     float last_spot = atof(update_data["LastPrice"].c_str());
 
     double maturity, strike, basic_vola;
@@ -455,7 +444,7 @@ void OptionValue::main_value_process(void *stParam)
 		time(&now);
 		current = *localtime(&now);
 
-		iRet = my_redis.HGetAll(ptr->main_contract.contract_code, update_data);
+        iRet = my_redis->HGetAll(ptr->main_contract.contract_code, update_data);
 		float last_spot = atof(update_data["LastPrice"].c_str());
         //cout << update_data["UpdateTime"]<<": "<<last_spot << endl;
         if (abs(last_spot - atm_strike)>10)
@@ -507,8 +496,8 @@ void OptionValue::main_value_process(void *stParam)
             sprintf(buffer, "%f", temp_param.volatility);
 			ptr->main_contract.Quote["atm_vanila_call"]["implied_vol"] = buffer;
 			ptr->main_contract.Quote["atm_vanila_put"]["implied_vol"] = buffer;
-			my_redis.HMSet(ptr->main_contract.OTC_Code["atm_vanila_call"], ptr->main_contract.Quote["atm_vanila_call"]);
-			my_redis.HMSet(ptr->main_contract.OTC_Code["atm_vanila_put"], ptr->main_contract.Quote["atm_vanila_put"]);
+            my_redis->HMSet(ptr->main_contract.OTC_Code["atm_vanila_call"], ptr->main_contract.Quote["atm_vanila_call"]);
+            my_redis->HMSet(ptr->main_contract.OTC_Code["atm_vanila_put"], ptr->main_contract.Quote["atm_vanila_put"]);
 
 			param_lock.lock();
 			param_update = false;
@@ -539,7 +528,7 @@ void OptionValue::Auto_Hedger(void *stParam)
 //		current = *localtime(&now);
 
 //		Total_Position = tm->getAllMainAccountPosition();
-//		iRet = my_redis.HGetAll(ptr->main_contract.contract_code, update_data);
+//		iRet = my_redis->HGetAll(ptr->main_contract.contract_code, update_data);
 //		float last_spot = atof(update_data["LastPrice"].c_str());
 //		net_delta=ptr->Delta_Hedger(Total_Position,last_spot);
 //		cout << update_data["UpdateTime"] << ": " << last_spot <<"  Position Delta: "<<net_delta<< endl;
@@ -562,7 +551,7 @@ double OptionValue::Position_Quote(const PositionType &Position)
     PricingParam temp_param;
     map<string, string> update_data;
     string underlying_code=Position.underlying_code.toStdString();
-    int iRet = my_redis.HGetAll(underlying_code, update_data);
+    int iRet = my_redis->HGetAll(underlying_code, update_data);
     float last_spot = atof(update_data["LastPrice"].c_str());
 
     double maturity, strike, basic_vola;
@@ -673,7 +662,7 @@ PositionRisk OptionValue::PositionGreeks(const PositionType &Position)
     PricingParam temp_param;
 	map<string, string> update_data;
     string underlying_code=Position.underlying_code.toStdString();
-    int iRet = my_redis.HGetAll(underlying_code, update_data);
+    int iRet = my_redis->HGetAll(underlying_code, update_data);
     float last_spot = stof(update_data["LastPrice"]);
 
     temp_param.spot_price = last_spot;
@@ -744,7 +733,7 @@ PositionRisk OptionValue::PositionGreeks(const PositionType &Position)
 
 double OptionValue::Price_Qoute(const string &instr_code) {
 	string price;
-	my_redis.HGet(main_contract.contract_code, "LastPrice", price);
+    my_redis->HGet(main_contract.contract_code, "LastPrice", price);
 	return stod(price);
 }
 
@@ -756,7 +745,7 @@ vector<string> OptionValue::Get_Main_Contract_Codes() {
 
 string OptionValue::getUnderlyingCode(const string &option_code) {
     string underlying_code;
-    my_redis.HGet("PARAM-OTC-IFX03", "Underlying_Code", underlying_code);
+    my_redis->HGet("PARAM-OTC-IFX03", "Underlying_Code", underlying_code);
     return underlying_code;
 }
 
@@ -769,6 +758,6 @@ int OptionValue::getMultiplier(const string &instr_code) {
 double OptionValue::getUnderlyingPrice(const string &instr_code) {
     string underlying_code = getUnderlyingCode(instr_code);
 	string str_price;
-	my_redis.HGet(underlying_code, "LastPrice", str_price);
+    my_redis->HGet(underlying_code, "LastPrice", str_price);
 	return stod(str_price);
 }

@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "logindialog.h"
 #include "valuation_class.h"
+#include "accessredis.h"
 
 #include <fstream>
 
@@ -9,6 +10,7 @@
 #include <QPluginLoader>
 #include <QMessageBox>
 #include <QDebug>
+#include <QObject>
 
 using namespace std;
 
@@ -19,7 +21,7 @@ string REDIS_PASSWD = "";
 int getRedisInfo() {
     ifstream redis_info("redis_info.ini");
     if (!redis_info.is_open()) {
-        QMessageBox::warning(0, "Warning", "读取redis连接配置文件失败。");
+        QMessageBox::warning(0, QObject::tr("Warning"), QObject::tr("Loading redis info failed"));
         exit(1);
     }
     string line;
@@ -31,15 +33,16 @@ int getRedisInfo() {
 
 int main(int argc, char *argv[])
 {
-    getRedisInfo();
     QApplication a(argc, argv);
-    qDebug() << QCoreApplication::libraryPaths();
     DatabaseAccess db;
+    CAccessRedis redis;
+    getRedisInfo();
+    initRedis(&redis);
     LoginDialog login(&db);
     if (login.exec()){
-        OptionValue calc_server("TradeDate.txt", db.getParam());
+        OptionValue calc_server("TradeDate.txt", &redis, db.getParam());
 
-        MainWindow w(&db, &calc_server);
+        MainWindow w(&db, &calc_server, &redis);
         w.show();
         return a.exec();
     }

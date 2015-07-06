@@ -23,8 +23,7 @@ OptionCalcDialog::~OptionCalcDialog()
 }
 
 void OptionCalcDialog::init() {
-    ui->classCodeComboBox->addItems(QStringList({"SRO", "0MO"}));
-    ui->spreadTypeComboBox->addItems(QStringList({"Val"}));
+    ui->classCodeComboBox->addItems(db->getAllClassCode());
     ui->optionTypeComboBox->addItems(QStringList({tr("Call"), tr("Put")}));
     ui->maturityDateEdit->setDate(QDate::currentDate());
     ui->maturityDateEdit->setMinimumDate(QDate::currentDate());
@@ -35,8 +34,8 @@ void OptionCalcDialog::on_pricingPushButton_clicked()
 {
     PricingParam pp;
     bool ok1, ok2, ok3, ok4, ok5;
-    pp.multiplier = ui->multiplierLineEdit->text().toInt(&ok1);
-    pp.option_type = ui->optionTypeComboBox->currentText() == "Call"? 0:1;
+    pp.free_rate = ui->freeRateLineEdit->text().toDouble(&ok1);
+    pp.option_type = ui->optionTypeComboBox->currentText() == "Call"? 1:2;
     pp.yield_rate = ui->yieldRateLineEdit->text().toDouble(&ok2);
     pp.volatility = ui->volatilityLineEdit->text().toDouble(&ok3);
     auto maturity_date = ui->maturityDateEdit->date().toString("yyyy-MM-dd").toStdString();
@@ -50,6 +49,7 @@ void OptionCalcDialog::on_pricingPushButton_clicked()
     }
     auto price = bls_vanila_option(pp);
     ui->priceLineEdit->setText(QString::number(price));
+    ui->relativePriceLineEdit->setText(QString::number(price/pp.spot_price));
 }
 
 void OptionCalcDialog::on_getDefaultPushButton_clicked()

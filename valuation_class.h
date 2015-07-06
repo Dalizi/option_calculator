@@ -27,7 +27,7 @@ struct Contract_Info
 class OptionValue
 {
 public:
-    OptionValue(string trade_date_file, const map<string,PricingParam> &parameters);
+    OptionValue(string trade_date_file, CAccessRedis *redis, const map<string,PricingParam> &parameters);
 	~OptionValue();
 
 	void Init();
@@ -70,7 +70,7 @@ public:
 	bool value_flag,hedge_flag,param_update;
 	mutex param_lock;
     vector<PositionType> Total_Position;
-    CAccessRedis my_redis;
+    CAccessRedis *my_redis;
 private:
 	void ParameterToMap();
 	void MapToParameter();

@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QString>
+#include <QStringList>
 #include <QSqlError>
 #include <QSqlQuery>
 
@@ -18,7 +19,7 @@ class DatabaseAccess : public QObject
     Q_OBJECT
     QSqlDatabase db;
 
-    QString genContractNum();
+    QString genContractNum(int client_id);
 public:
     explicit DatabaseAccess(QObject *parent = 0);
     void setLoginInfo(const QString &user_name, const QString &password);
@@ -28,10 +29,15 @@ public:
     bool writeTransaction(TransactionType trans_type);
     void updatePosition(PositionType &pt, const TransactionType &tt);
 
-    std::vector<PositionType> getAllPosition();
-    map<std::string, PricingParam> getParam();
+    std::vector<PositionType> getAllPosition(const QString &instr_type);
+    std::map<std::string, PricingParam> getParam();
+    QStringList getAllClassCode();
+    bool setPassword(const QString new_passwd, const QString old_password);
 
-    void test();
+private:
+    void loadConfig(const std::string &configFile);
+    QString username;
+    QString password;
 
 signals:
     void transactionWritten(TransactionType trans);

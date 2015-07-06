@@ -2,10 +2,13 @@
 #include "ui_addorderdialog.h"
 #include "tradetypes.h"
 
-addOrderDialog::addOrderDialog(DatabaseAccess *db, QWidget *parent) :
+#include <QMessageBox>
+
+addOrderDialog::addOrderDialog(DatabaseAccess *db, CAccessRedis *redis, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::addOrderDialog),
-    db(db)
+    db(db),
+    redis(redis)
 {
     ui->setupUi(this);
     connect(this, SIGNAL(accepted()), parent, SLOT(onTransactionWritten()));
@@ -18,7 +21,7 @@ addOrderDialog::~addOrderDialog()
 }
 
 void addOrderDialog::init() {
-    ui->underlyingInstrTypeComboBox->addItems(QStringList({"SR", "IF"}));
+    ui->underlyingInstrTypeComboBox->addItems(db->getAllClassCode());
     ui->callPutComboBox->addItems(QStringList({"Call", "Put"}));
     ui->optionTypeComboBox->addItems(QStringList({"00", "01", "02", "03", "04", "05"}));
     ui->longShortComboBox->addItems(QStringList({"Long", "Short"}));
@@ -31,7 +34,6 @@ void addOrderDialog::accept() {
     TransactionType trans;
     QString instr_code = "OTC-";
     instr_code += ui->underlyingInstrTypeComboBox->currentText();
-    instr_code += 'O';
     instr_code += ui->callPutComboBox->currentText() == "Call"?'C':'P';
     instr_code += ui->optionTypeComboBox->currentText();
     instr_code += '-';
@@ -46,6 +48,12 @@ void addOrderDialog::accept() {
     trans.underlying_code = ui->underlyingCodeLineEdit->text();
     trans.underlying_price = ui->underlyingPriceLineEdit->text().toDouble();
     trans.knockout_price = ui->kickOutPriceLineEdit->text().toDouble();
-    if (db->writeTransaction(trans))
+    bool isUnderlyingCodeExists;
+    redis->Exists(trans.underlying_code.toStdString(), isUnderlyingCodeExists);
+    if (!isUnderlyingCodeExists) {
+        QMessageBox::warning(this, "Error", "Underlying code doesn't exist.");
+        return;
+    }
+    if (db->writeTransaction(trans) && isUnderlyingCodeExists)
         QDialog::accept();
 }
