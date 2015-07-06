@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     valuation_class.cpp \
     accessredis.cpp \
     base_function.cpp \
-    optioncalcdialog.cpp
+    optioncalcdialog.cpp \
+    positiontablemodel.cpp
 
 HEADERS  += mainwindow.h \
     databaseaccess.h \
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     base_function.h \
     valuation_class.h \
     accessredis.h \
-    optioncalcdialog.h
+    optioncalcdialog.h \
+    positiontablemodel.h
 
 FORMS    += mainwindow.ui \
     logindialog.ui \

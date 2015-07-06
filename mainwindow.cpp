@@ -13,7 +13,7 @@ MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, CAccessRedi
     calc_server(calc_server),
     opt_calc(new OptionCalcDialog(calc_server, db)),
     redis(redis),
-    model(new QSqlTableModel(this, db->getDatabase()))
+    model(new PositionTableModel(this, db->getDatabase()))
 {
     ui->setupUi(this);
     init();
@@ -29,6 +29,7 @@ MainWindow::~MainWindow()
 void MainWindow::init() {
     ui->optionClassComboBox->addItems(db->getAllClassCode());
     //initPositionTable();
+    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     updateRiskInfo();
     QAction *deleteAction = new QAction("Delte record", 0);
     ui->positionTableView->addAction(deleteAction);
@@ -85,8 +86,7 @@ void MainWindow::onDeleteActionTriggered() {
         return;
     int row = ui->positionTableView->currentIndex().row();
     ui->positionTableView->selectRow(row);
-    if (QMessageBox::question(0, tr("Warning"), tr("Do you want to remove this record?")) == QMessageBox::Yes)
-        model->removeRow(row);
+    model->removeRow(row);
 }
 
 void MainWindow::onRevertButtonClicked() {
@@ -95,7 +95,9 @@ void MainWindow::onRevertButtonClicked() {
 
 void MainWindow::on_savePushButton_clicked()
 {
-    model->submitAll();
+
+    if (QMessageBox::question(0, tr("Warning"), tr("Do you want to commit all changes?")) == QMessageBox::Yes)
+        model->submitAll();
 }
 
 void MainWindow::on_refreshPushButton_clicked()
