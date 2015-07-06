@@ -21,8 +21,7 @@ addOrderDialog::~addOrderDialog()
 }
 
 void addOrderDialog::init() {
-    ui->underlyingInstrTypeComboBox->addItem("SR");
-    ui->underlyingInstrTypeComboBox->addItem("0M");
+    ui->underlyingInstrTypeComboBox->addItems(db->getAllClassCode());
     ui->callPutComboBox->addItem("Call");
     ui->callPutComboBox->addItem("Put");
     ui->optionTypeComboBox->addItem("00");
@@ -33,6 +32,7 @@ void addOrderDialog::init() {
     ui->optionTypeComboBox->addItem("05");
     ui->longShortComboBox->addItem("Long");
     ui->longShortComboBox->addItem("Short");
+    ui->callPutComboBox->addItems(QStringList({"Call", "Put"}));
     ui->maturityDateEdit->setDate(QDate::currentDate());
     ui->maturityDateEdit->setMinimumDate(QDate::currentDate());
     ui->maturityDateEdit->setCalendarPopup(true);
@@ -42,7 +42,6 @@ void addOrderDialog::accept() {
     TransactionType trans;
     QString instr_code = "OTC-";
     instr_code += ui->underlyingInstrTypeComboBox->currentText();
-    instr_code += 'O';
     instr_code += ui->callPutComboBox->currentText() == "Call"?'C':'P';
     instr_code += ui->optionTypeComboBox->currentText();
     instr_code += '-';

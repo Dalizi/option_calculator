@@ -20,6 +20,8 @@ DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 void DatabaseAccess::setLoginInfo(const QString &user_name, const QString &password) {
     db.setUserName(user_name);  //设置用户名
     db.setPassword(password);  //设置密码
+    username=user_name;
+    this->password = password;
 }
 
 void DatabaseAccess::loadConfig(const string &configFile) {
@@ -177,7 +179,6 @@ vector<PositionType> DatabaseAccess::getAllPosition(const QString &instr_type) {
     query.prepare("SELECT * FROM positions WHERE instr_code LIKE 'OTC-"+instr_type+"%'");
     if (!query.exec())
         QMessageBox::warning(0, "读取所有持仓失败", query.lastError().text());
-    qDebug() <<query.lastQuery();
     vector<PositionType> ret;
     while (query.next()) {
         PositionType position;
@@ -237,6 +238,31 @@ map<string, PricingParam> DatabaseAccess::getParam() {
         ret[query.value("class_code").toString().toStdString()] = pp;
     }
     return ret;
+}
+
+QStringList DatabaseAccess::getAllClassCode() {
+    QStringList ret;
+    QSqlQuery query(db);
+    query.prepare("SELECT class_code FROM param;");
+    if (!query.exec())
+        QMessageBox::warning(0, tr("Reading class code failed"), query.lastError().text());
+    while (query.next())
+        ret.push_back(query.value(0).toString());
+    return ret;
+}
+
+bool DatabaseAccess::setPassword(const QString new_passwd, const QString old_password) {
+    if (old_password!= password) {
+        QMessageBox::warning(0, tr("Error"), tr("Incorrect old password."));
+        return false;
+    }
+    QSqlQuery query(db);
+    query.prepare("SET PASSWORD = PASSWORD('" + new_passwd + "')");
+    if (!query.exec()) {
+        QMessageBox::warning(0, tr("Error"), tr("Resetting password failed."));
+        return false;
+    }
+    return true;
 }
 
 //#Sql command

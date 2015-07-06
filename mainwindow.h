@@ -6,7 +6,7 @@
 #include "accessredis.h"
 
 #include <QMainWindow>
-#include <QSqlTableModel>
+#include <positiontablemodel.h>
 
 namespace Ui {
 class MainWindow;
@@ -23,7 +23,7 @@ public:
 private:
     Ui::MainWindow *ui;
     DatabaseAccess *db;
-    QSqlTableModel *model;
+    PositionTableModel *model;
     OptionValue *calc_server;
     OptionCalcDialog *opt_calc;
     CAccessRedis *redis;
@@ -44,6 +44,7 @@ private slots:
     void on_savePushButton_clicked();
     void on_refreshPushButton_clicked();
     void on_optionClassComboBox_currentTextChanged(const QString &arg1);
+    void onResetPasswordActionTriggered();
 };
 
 #endif // MAINWINDOW_H

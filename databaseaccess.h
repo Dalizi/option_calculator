@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QString>
+#include <QStringList>
 #include <QSqlError>
 #include <QSqlQuery>
 
@@ -29,10 +30,14 @@ public:
     void updatePosition(PositionType &pt, const TransactionType &tt);
 
     std::vector<PositionType> getAllPosition(const QString &instr_type);
-    map<std::string, PricingParam> getParam();
+    std::map<std::string, PricingParam> getParam();
+    QStringList getAllClassCode();
+    bool setPassword(const QString new_passwd, const QString old_password);
 
 private:
     void loadConfig(const std::string &configFile);
+    QString username;
+    QString password;
 
 signals:
     void transactionWritten(TransactionType trans);

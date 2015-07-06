@@ -11,6 +11,7 @@
 #include <QPluginLoader>
 #include <QMessageBox>
 #include <QDebug>
+#include <QObject>
 
 using namespace std;
 
@@ -21,25 +22,24 @@ string REDIS_PASSWD = "";
 int getRedisInfo() {
     ifstream redis_info("redis_info.ini");
     if (!redis_info.is_open()) {
-        QMessageBox::warning(0, "Warning", "读取redis连接配置文件失败。");
+        QMessageBox::warning(0, QObject::tr("Warning"), QObject::tr("Loading redis info failed"));
         exit(1);
     }
     string line;
     if (getline(redis_info, line)) REDIS_ADDR = line;
     if (getline(redis_info, line)) REDIS_PORT = stod(line);
     if (getline(redis_info, line)) REDIS_PASSWD = line;
+    return 0;
 }
 
 int initRedis(CAccessRedis *my_redis) {
     int iRet = my_redis->Connect(REDIS_ADDR, REDIS_PORT, REDIS_PASSWD);
-    //int iRet = my_redis.Connect("127.0.0.1", 6379);
     if (iRet != 0) {
         stringstream ss;
         ss << "Redis Error: " <<iRet;
-        QMessageBox::about(0, "ERROR", QString::fromStdString(ss.str()));
+        QMessageBox::about(0, QObject::tr("Error"), QString::fromStdString(ss.str()));
         exit(1);
     }
-    cout<<"REDIS数据库已连接!"<<endl;
     my_redis->Select(0);
 }
 
@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
 	getRedisInfo();
     DatabaseAccess db;
     CAccessRedis redis;
+    getRedisInfo();
     initRedis(&redis);
     LoginDialog login(&db);
     if (login.exec()){
