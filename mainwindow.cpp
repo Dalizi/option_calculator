@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "addorderdialog.h"
 #include "transactionviewdialog.h"
+#include "resetpassworddialog.h"
 
 
 #include <QMessageBox>
@@ -38,6 +39,7 @@ void MainWindow::init() {
     connect(deleteAction, SIGNAL(triggered(bool)), this, SLOT(onDeleteActionTriggered()));
     connect(ui->revertPushButton, SIGNAL(clicked(bool)), model, SLOT(revertAll()));
     connect(ui->optionPricingAction, SIGNAL(triggered()), opt_calc, SLOT(show()));
+    connect(ui->actionReset_Password, SIGNAL(triggered()), this, SLOT(onResetPasswordActionTriggered()));
 }
 
 //void MainWindow::initPositionTable() {
@@ -147,4 +149,9 @@ void MainWindow::on_optionClassComboBox_currentTextChanged(const QString &arg1)
     model->setHeaderData(10, Qt::Horizontal, tr("Knock Out Price"));
     model->setHeaderData(11, Qt::Horizontal, tr("Contract NO."));
     ui->positionTableView->setModel(model);
+}
+
+void MainWindow::onResetPasswordActionTriggered() {
+    ResetPasswordDialog rpd(db, this);
+    rpd.exec();
 }

@@ -262,9 +262,16 @@
     </property>
     <addaction name="optionPricingAction"/>
    </widget>
+   <widget class="QMenu" name="menuUser_Info_Management">
+    <property name="title">
+     <string>User Info Management</string>
+    </property>
+    <addaction name="actionReset_Password"/>
+   </widget>
    <addaction name="orderPlaceMenu"/>
    <addaction name="transactionMenu"/>
    <addaction name="calcMenu"/>
+   <addaction name="menuUser_Info_Management"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -323,6 +330,11 @@
     <font>
      <family>WenQuanYi Micro Hei</family>
     </font>
+   </property>
+  </action>
+  <action name="actionReset_Password">
+   <property name="text">
+    <string>Reset Password</string>
    </property>
   </action>
  </widget>
