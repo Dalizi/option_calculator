@@ -263,15 +263,27 @@
     <addaction name="optionPricingAction"/>
    </widget>
    <widget class="QMenu" name="menuUser_Info_Management">
+    <property name="font">
+     <font>
+      <family>WenQuanYi Micro Hei</family>
+     </font>
+    </property>
     <property name="title">
-     <string>User Info Management</string>
+     <string>个人信息管理</string>
     </property>
     <addaction name="actionReset_Password"/>
+   </widget>
+   <widget class="QMenu" name="menuUser_Management">
+    <property name="title">
+     <string>用户管理</string>
+    </property>
+    <addaction name="actionAdd_User"/>
    </widget>
    <addaction name="orderPlaceMenu"/>
    <addaction name="transactionMenu"/>
    <addaction name="calcMenu"/>
    <addaction name="menuUser_Info_Management"/>
+   <addaction name="menuUser_Management"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -334,7 +346,12 @@
   </action>
   <action name="actionReset_Password">
    <property name="text">
-    <string>Reset Password</string>
+    <string>重置密码</string>
+   </property>
+  </action>
+  <action name="actionAdd_User">
+   <property name="text">
+    <string>添加用户</string>
    </property>
   </action>
  </widget>

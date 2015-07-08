@@ -3,6 +3,7 @@
 #include "addorderdialog.h"
 #include "transactionviewdialog.h"
 #include "resetpassworddialog.h"
+#include "adduserdialog.h"
 
 
 #include <QMessageBox>
@@ -11,10 +12,10 @@ MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, CAccessRedi
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     db(db),
+    model(new PositionTableModel(this, db->getDatabase())),
     calc_server(calc_server),
     opt_calc(new OptionCalcDialog(calc_server, db)),
-    redis(redis),
-    model(new PositionTableModel(this, db->getDatabase()))
+    redis(redis)
 {
     ui->setupUi(this);
     init();
@@ -154,4 +155,9 @@ void MainWindow::on_optionClassComboBox_currentTextChanged(const QString &arg1)
 void MainWindow::onResetPasswordActionTriggered() {
     ResetPasswordDialog rpd(db, this);
     rpd.exec();
+}
+
+void MainWindow::on_actionAdd_User_triggered() {
+    AddUserDialog aud(db);
+    aud.exec();
 }

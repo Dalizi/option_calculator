@@ -264,6 +264,71 @@ bool DatabaseAccess::setPassword(const QString new_passwd, const QString old_pas
     return true;
 }
 
+bool DatabaseAccess::addUser(const QString user_name, const QString init_password, UserPrivilege priv) {
+    QString ip_addr;
+    if (priv == ADMIN)
+        ip_addr = "localhost";
+    else
+        ip_addr = "%";
+    QString query_text = "CREATE USER '%1'@'%2' IDENTIFIED BY'%3'";
+    QSqlQuery query(db);
+    query.prepare(query_text.arg(user_name).arg(ip_addr).arg(init_password));
+    if (!query.exec()) {
+        QMessageBox::warning(0, tr("Error"), query.lastError().text());
+        return false;
+    }
+
+    QString priv_str = "GRANT %1 ON %2 TO '%3'@'%4'";
+    auto err_func = [user_name, ip_addr](QSqlQuery &query) {
+        QMessageBox::warning(0, tr("Error"), query.lastError().text());
+        QString drop_user_str = "DROP USER '%1'@'%2'";
+        Q_ASSERT(query.exec(drop_user_str.arg(user_name).arg(ip_addr)));
+    };
+    if (priv == ADMIN) {
+        query.prepare(priv_str.arg("ALL").arg("sugar_opt.*").arg(user_name).arg("localhost"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+    } else if (priv == BROKER) {
+        query.prepare(priv_str.arg("INSERT, SELECT, DELETE, UPDATE").arg("sugar_opt.positions").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+        query.prepare(priv_str.arg("INSERT, SELECT, DELETE, UPDATE").arg("sugar_opt.transactions").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+        query.prepare(priv_str.arg("SELECT").arg("sugar_opt.param").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+    } else if (priv == QUANT) {
+        query.prepare(priv_str.arg("INSERT, SELECT, DELETE, UPDATE").arg("sugar_opt.param").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+        query.prepare(priv_str.arg("SELECT").arg("sugar_opt.transactions").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+        query.prepare(priv_str.arg("SELECT").arg("sugar_opt.positions").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+    } else {
+        QMessageBox::warning(0, tr("Error"), tr("Unknown user type."));
+    }
+    return true;
+
+}
+
 //#Sql command
 //CREATE TABLE IF NOT EXISTS positions (
 //    client_id INT NOT NULL,

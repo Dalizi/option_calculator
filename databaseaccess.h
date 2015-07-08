@@ -21,6 +21,12 @@ class DatabaseAccess : public QObject
 
     QString genContractNum(int client_id);
 public:
+    enum UserPrivilege {
+        ADMIN = 0,
+        BROKER = 1,
+        QUANT = 2
+    };
+
     explicit DatabaseAccess(QObject *parent = 0);
     void setLoginInfo(const QString &user_name, const QString &password);
     bool connectToDatabase() {return db.open();}
@@ -33,6 +39,7 @@ public:
     std::map<std::string, PricingParam> getParam();
     QStringList getAllClassCode();
     bool setPassword(const QString new_passwd, const QString old_password);
+    bool addUser(const QString user_name, const QString init_password, UserPrivilege priv);
 
 private:
     void loadConfig(const std::string &configFile);

@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "databaseaccess.h"
+
 namespace Ui {
 class AddUserDialog;
 }
@@ -12,11 +14,15 @@ class AddUserDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit AddUserDialog(QWidget *parent = 0);
+    explicit AddUserDialog(DatabaseAccess *db, QWidget *parent = 0);
     ~AddUserDialog();
+
+private slots:
+    void on_buttonBox_accepted();
 
 private:
     Ui::AddUserDialog *ui;
+    DatabaseAccess *db;
 };
 
 #endif // ADDUSERDIALOG_H
