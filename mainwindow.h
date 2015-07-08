@@ -7,6 +7,7 @@
 
 #include <QMainWindow>
 #include <positiontablemodel.h>
+#include <QTableView>
 
 namespace Ui {
 class MainWindow;
@@ -27,6 +28,7 @@ private:
     OptionValue *calc_server;
     OptionCalcDialog *opt_calc;
     CAccessRedis *redis;
+    QTableView userInfoTable;
 
     void init();
    // void initPositionTable();
@@ -45,6 +47,7 @@ private slots:
     void on_refreshPushButton_clicked();
     void on_optionClassComboBox_currentTextChanged(const QString &arg1);
     void on_actionAdd_User_triggered();
+    void on_actionUser_Info_triggered();
     void onResetPasswordActionTriggered();
 };
 

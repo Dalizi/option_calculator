@@ -325,6 +325,8 @@ bool DatabaseAccess::addUser(const QString user_name, const QString init_passwor
     } else {
         QMessageBox::warning(0, tr("Error"), tr("Unknown user type."));
     }
+    if (!query.exec(QString("INSERT INTO user_info (user_name, user_priv) VALUES('%1', '%2');").arg(user_name).arg(priv == ADMIN?"Admin":(priv == BROKER?"Broker":"Quant"))))
+        err_func(query);
     return true;
 
 }
@@ -368,8 +370,13 @@ bool DatabaseAccess::addUser(const QString user_name, const QString init_passwor
 //        volatility DOUBLE NOT NULL,
 //        yield_rate DOUBLE NOT NULL);
 
+//CREATE TABLE IF NOT EXISTS user_info (
+//        user_name VARCHAR(20) NOT NULL PRIMARY KEY,
+//        user_priv ENUM('Admin', 'Broker', 'Quant'));
+
 //INSERT INTO param (class_code, basis_delta_spread, basis_price_spread, basis_vol_spread, free_rate, multiplier, spread_type, volatility, yield_rate)
 //VALUES ('SRO', 0, 0, 0.012, 0.05, 100, 'Vol', 0.4, 0);
 
 //INSERT INTO param (class_code, basis_delta_spread, basis_price_spread, basis_vol_spread, free_rate, multiplier, spread_type, volatility, yield_rate)
 //VALUES ('0MO', 0, 0, 0.012, 0.05, 100, 'Vol', 0.4, 0);
+

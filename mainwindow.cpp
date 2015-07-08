@@ -32,6 +32,10 @@ void MainWindow::init() {
     ui->optionClassComboBox->addItems(db->getAllClassCode());
     //initPositionTable();
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    auto model = new QSqlTableModel(this, db->getDatabase());
+    model->setTable("user_info");
+    model->select();
+    userInfoTable.setModel(model);
     updateRiskInfo();
     QAction *deleteAction = new QAction("Delte record", 0);
     ui->positionTableView->addAction(deleteAction);
@@ -100,7 +104,8 @@ void MainWindow::on_savePushButton_clicked()
 {
 
     if (QMessageBox::question(0, tr("Warning"), tr("Do you want to commit all changes?")) == QMessageBox::Yes)
-        model->submitAll();
+        if (!model->submitAll())
+            QMessageBox::warning(0, tr("Submission failed"), model->lastError().text());
 }
 
 void MainWindow::on_refreshPushButton_clicked()
@@ -160,4 +165,8 @@ void MainWindow::onResetPasswordActionTriggered() {
 void MainWindow::on_actionAdd_User_triggered() {
     AddUserDialog aud(db);
     aud.exec();
+}
+
+void MainWindow::on_actionUser_Info_triggered() {
+    userInfoTable.show();
 }
