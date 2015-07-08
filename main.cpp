@@ -40,6 +40,7 @@ int initRedis(CAccessRedis *my_redis) {
         exit(1);
     }
     my_redis->Select(0);
+    return iRet;
 }
 
 int main(int argc, char *argv[])
