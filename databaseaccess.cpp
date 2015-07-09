@@ -239,6 +239,26 @@ map<string, PricingParam> DatabaseAccess::getParam() {
     return ret;
 }
 
+bool DatabaseAccess::setParam(const QString &code, const PricingParam &param) {
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO param (class_code, basis_delta_spread, basis_price_spread, basis_vol_spread, free_rate, multiplier, spread_type, volatility, yield_rate )"
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    query.addBindValue(code);
+    query.addBindValue(QString::fromStdString(param.other_param.at("basis_delta_spread")));
+    query.addBindValue(QString::fromStdString(param.other_param.at("basis_price_spread")));
+    query.addBindValue(QString::fromStdString(param.other_param.at("basis_vol_spread")));
+    query.addBindValue(param.free_rate);
+    query.addBindValue(param.multiplier);
+    query.addBindValue("Vol");
+    query.addBindValue(param.volatility);
+    query.addBindValue(param.yield_rate);
+    if (!query.exec()) {
+        QMessageBox::warning(0, tr("Setting parameters failed"), query.lastError().text());
+        return false;
+    }
+    return true;
+}
+
 QStringList DatabaseAccess::getAllClassCode() {
     QStringList ret;
     QSqlQuery query(db);

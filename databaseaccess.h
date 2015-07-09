@@ -37,6 +37,7 @@ public:
 
     std::vector<PositionType> getAllPosition(const QString &instr_type);
     std::map<std::string, PricingParam> getParam();
+    bool setParam(const QString &code, const PricingParam &param);
     QStringList getAllClassCode();
     bool setPassword(const QString new_passwd, const QString old_password);
     bool addUser(const QString user_name, const QString init_password, UserPrivilege priv);
