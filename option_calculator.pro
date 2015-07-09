@@ -26,7 +26,9 @@ SOURCES += main.cpp\
     optioncalcdialog.cpp \
     positiontablemodel.cpp \
     adduserdialog.cpp \
-    resetpassworddialog.cpp
+    resetpassworddialog.cpp \
+    paramsettingdialog.cpp \
+    addparamdialog.cpp
 
 HEADERS  += mainwindow.h \
     databaseaccess.h \
@@ -40,7 +42,9 @@ HEADERS  += mainwindow.h \
     optioncalcdialog.h \
     positiontablemodel.h \
     adduserdialog.h \
-    resetpassworddialog.h
+    resetpassworddialog.h \
+    paramsettingdialog.h \
+    addparamdialog.h
 
 FORMS    += mainwindow.ui \
     logindialog.ui \
@@ -48,7 +52,9 @@ FORMS    += mainwindow.ui \
     transactionviewdialog.ui \
     optioncalcdialog.ui \
     adduserdialog.ui \
-    resetpassworddialog.ui
+    resetpassworddialog.ui \
+    paramsettingdialog.ui \
+    addparamdialog.ui
 
 RESOURCES += \
     multi_language.qrc
