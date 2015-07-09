@@ -48,6 +48,7 @@ private slots:
     void on_optionClassComboBox_currentTextChanged(const QString &arg1);
     void on_actionAdd_User_triggered();
     void on_actionUser_Info_triggered();
+    void on_actionParam_Setting_triggered();
     void onResetPasswordActionTriggered();
 };
 

@@ -261,6 +261,7 @@
      <string>计算</string>
     </property>
     <addaction name="optionPricingAction"/>
+    <addaction name="actionParam_Setting"/>
    </widget>
    <widget class="QMenu" name="menuUser_Info_Management">
     <property name="font">
@@ -373,6 +374,11 @@
     <font>
      <family>WenQuanYi Micro Hei</family>
     </font>
+   </property>
+  </action>
+  <action name="actionParam_Setting">
+   <property name="text">
+    <string>参数设置</string>
    </property>
   </action>
  </widget>

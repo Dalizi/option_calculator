@@ -4,7 +4,7 @@
 #include "transactionviewdialog.h"
 #include "resetpassworddialog.h"
 #include "adduserdialog.h"
-
+#include "paramsettingdialog.h"
 
 #include <QMessageBox>
 
@@ -30,12 +30,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::init() {
     ui->optionClassComboBox->addItems(db->getAllClassCode());
-    //initPositionTable();
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
-    auto model = new QSqlTableModel(this, db->getDatabase());
-    model->setTable("user_info");
-    model->select();
-    userInfoTable.setModel(model);
+    auto user_info_model = new QSqlTableModel(this, db->getDatabase());
+    user_info_model->setTable("user_info");
+    user_info_model->select();
+    userInfoTable.setModel(user_info_model);
     updateRiskInfo();
     QAction *deleteAction = new QAction("Delte record", 0);
     ui->positionTableView->addAction(deleteAction);
@@ -169,4 +168,9 @@ void MainWindow::on_actionAdd_User_triggered() {
 
 void MainWindow::on_actionUser_Info_triggered() {
     userInfoTable.show();
+}
+
+void MainWindow::on_actionParam_Setting_triggered() {
+    ParamSettingDialog psd(db);
+    psd.exec();
 }
