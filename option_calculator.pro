@@ -60,16 +60,16 @@ FORMS    += mainwindow.ui \
 RESOURCES += \
     multi_language.qrc
 
-INCLUDEPATH += C:\Users\admin\Downloads\redis-2.8.24\redis-2.8\deps
+INCLUDEPATH += C:\Users\mystconqueror\Downloads\redis-release-2.8.17\redis-release-2.8.17\deps
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/x64/release/ -lhiredis
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/x64/debug/ -lhiredis
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/release/ -lhiredis
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/debug/ -lhiredis
 
-INCLUDEPATH += $$PWD/x64/Debug
-DEPENDPATH += $$PWD/x64/Debug
+INCLUDEPATH += $$PWD/Debug
+DEPENDPATH += $$PWD/Debug
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/x64/release/ -lWin32_Interop
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/x64/debug/ -lWin32_Interop
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/release/ -lWin32_Interop
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/debug/ -lWin32_Interop
 
-INCLUDEPATH += $$PWD/x64/Debug
-DEPENDPATH += $$PWD/x64/Debug
+INCLUDEPATH += $$PWD/Debug
+DEPENDPATH += $$PWD/Debug
