@@ -2,7 +2,9 @@
 #include "ui_mainwindow.h"
 #include "addorderdialog.h"
 #include "transactionviewdialog.h"
-
+#include "resetpassworddialog.h"
+#include "adduserdialog.h"
+#include "paramsettingdialog.h"
 
 #include <QMessageBox>
 
@@ -10,10 +12,10 @@ MainWindow::MainWindow(DatabaseAccess *db, OptionValue *calc_server, CAccessRedi
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     db(db),
+    model(new PositionTableModel(this, db->getDatabase())),
     calc_server(calc_server),
     opt_calc(new OptionCalcDialog(calc_server, db)),
-    redis(redis),
-    model(new QSqlTableModel(this, db->getDatabase()))
+    redis(redis)
 {
     ui->setupUi(this);
     init();
@@ -27,9 +29,12 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::init() {
-    ui->optionClassComboBox->addItem("SRO");
-    ui->optionClassComboBox->addItem("0MO");
-    //initPositionTable();
+    ui->optionClassComboBox->addItems(db->getAllClassCode());
+    model->setEditStrategy(QSqlTableModel::OnManualSubmit);
+    auto user_info_model = new QSqlTableModel(this, db->getDatabase());
+    user_info_model->setTable("user_info");
+    user_info_model->select();
+    userInfoTable.setModel(user_info_model);
     updateRiskInfo();
     QAction *deleteAction = new QAction("Delte record", 0);
     ui->positionTableView->addAction(deleteAction);
@@ -38,6 +43,7 @@ void MainWindow::init() {
     connect(deleteAction, SIGNAL(triggered(bool)), this, SLOT(onDeleteActionTriggered()));
     connect(ui->revertPushButton, SIGNAL(clicked(bool)), model, SLOT(revertAll()));
     connect(ui->optionPricingAction, SIGNAL(triggered()), opt_calc, SLOT(show()));
+    connect(ui->actionReset_Password, SIGNAL(triggered()), this, SLOT(onResetPasswordActionTriggered()));
 }
 
 //void MainWindow::initPositionTable() {
@@ -86,8 +92,7 @@ void MainWindow::onDeleteActionTriggered() {
         return;
     int row = ui->positionTableView->currentIndex().row();
     ui->positionTableView->selectRow(row);
-    if (QMessageBox::question(0, tr("Warning"), tr("Do you want to remove this record?")) == QMessageBox::Yes)
-        model->removeRow(row);
+    model->removeRow(row);
 }
 
 void MainWindow::onRevertButtonClicked() {
@@ -96,7 +101,10 @@ void MainWindow::onRevertButtonClicked() {
 
 void MainWindow::on_savePushButton_clicked()
 {
-    model->submitAll();
+
+    if (QMessageBox::question(0, tr("Warning"), tr("Do you want to commit all changes?")) == QMessageBox::Yes)
+        if (!model->submitAll())
+            QMessageBox::warning(0, tr("Submission failed"), model->lastError().text());
 }
 
 void MainWindow::on_refreshPushButton_clicked()
@@ -146,4 +154,23 @@ void MainWindow::on_optionClassComboBox_currentTextChanged(const QString &arg1)
     model->setHeaderData(10, Qt::Horizontal, tr("Knock Out Price"));
     model->setHeaderData(11, Qt::Horizontal, tr("Contract NO."));
     ui->positionTableView->setModel(model);
+}
+
+void MainWindow::onResetPasswordActionTriggered() {
+    ResetPasswordDialog rpd(db, this);
+    rpd.exec();
+}
+
+void MainWindow::on_actionAdd_User_triggered() {
+    AddUserDialog aud(db);
+    aud.exec();
+}
+
+void MainWindow::on_actionUser_Info_triggered() {
+    userInfoTable.show();
+}
+
+void MainWindow::on_actionParam_Setting_triggered() {
+    ParamSettingDialog psd(db);
+    psd.exec();
 }

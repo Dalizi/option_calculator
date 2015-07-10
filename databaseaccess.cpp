@@ -20,6 +20,8 @@ DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 void DatabaseAccess::setLoginInfo(const QString &user_name, const QString &password) {
     db.setUserName(user_name);  //设置用户名
     db.setPassword(password);  //设置密码
+    username=user_name;
+    this->password = password;
 }
 
 void DatabaseAccess::loadConfig(const string &configFile) {
@@ -177,7 +179,6 @@ vector<PositionType> DatabaseAccess::getAllPosition(const QString &instr_type) {
     query.prepare("SELECT * FROM positions WHERE instr_code LIKE 'OTC-"+instr_type+"%'");
     if (!query.exec())
         QMessageBox::warning(0, "读取所有持仓失败", query.lastError().text());
-    qDebug() <<query.lastQuery();
     vector<PositionType> ret;
     while (query.next()) {
         PositionType position;
@@ -239,6 +240,118 @@ map<string, PricingParam> DatabaseAccess::getParam() {
     return ret;
 }
 
+bool DatabaseAccess::setParam(const QString &code, const PricingParam &param) {
+    QSqlQuery query(db);
+    query.prepare("INSERT INTO param (class_code, basis_delta_spread, basis_price_spread, basis_vol_spread, free_rate, multiplier, spread_type, volatility, yield_rate )"
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    query.addBindValue(code);
+    query.addBindValue(QString::fromStdString(param.other_param.at("basis_delta_spread")));
+    query.addBindValue(QString::fromStdString(param.other_param.at("basis_price_spread")));
+    query.addBindValue(QString::fromStdString(param.other_param.at("basis_vol_spread")));
+    query.addBindValue(param.free_rate);
+    query.addBindValue(param.multiplier);
+    query.addBindValue("Vol");
+    query.addBindValue(param.volatility);
+    query.addBindValue(param.yield_rate);
+    if (!query.exec()) {
+        QMessageBox::warning(0, tr("Setting parameters failed"), query.lastError().text());
+        return false;
+    }
+    return true;
+}
+
+QStringList DatabaseAccess::getAllClassCode() {
+    QStringList ret;
+    QSqlQuery query(db);
+    query.prepare("SELECT class_code FROM param;");
+    if (!query.exec())
+        QMessageBox::warning(0, tr("Reading class code failed"), query.lastError().text());
+    while (query.next())
+        ret.push_back(query.value(0).toString());
+    return ret;
+}
+
+bool DatabaseAccess::setPassword(const QString new_passwd, const QString old_password) {
+    if (old_password!= password) {
+        QMessageBox::warning(0, tr("Error"), tr("Incorrect old password."));
+        return false;
+    }
+    QSqlQuery query(db);
+    query.prepare("SET PASSWORD = PASSWORD('" + new_passwd + "')");
+    if (!query.exec()) {
+        QMessageBox::warning(0, tr("Error"), tr("Resetting password failed."));
+        return false;
+    }
+    return true;
+}
+
+bool DatabaseAccess::addUser(const QString user_name, const QString init_password, UserPrivilege priv) {
+    QString ip_addr;
+    if (priv == ADMIN)
+        ip_addr = "localhost";
+    else
+        ip_addr = "%";
+    QString query_text = "CREATE USER '%1'@'%2' IDENTIFIED BY'%3'";
+    QSqlQuery query(db);
+    query.prepare(query_text.arg(user_name).arg(ip_addr).arg(init_password));
+    if (!query.exec()) {
+        QMessageBox::warning(0, tr("Error"), query.lastError().text());
+        return false;
+    }
+
+    QString priv_str = "GRANT %1 ON %2 TO '%3'@'%4'";
+    auto err_func = [user_name, ip_addr](QSqlQuery &query) {
+        QMessageBox::warning(0, tr("Error"), query.lastError().text());
+        QString drop_user_str = "DROP USER '%1'@'%2'";
+        Q_ASSERT(query.exec(drop_user_str.arg(user_name).arg(ip_addr)));
+    };
+    if (priv == ADMIN) {
+        query.prepare(priv_str.arg("ALL").arg("sugar_opt.*").arg(user_name).arg("localhost"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+    } else if (priv == BROKER) {
+        query.prepare(priv_str.arg("INSERT, SELECT, DELETE, UPDATE").arg("sugar_opt.positions").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+        query.prepare(priv_str.arg("INSERT, SELECT, DELETE, UPDATE").arg("sugar_opt.transactions").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+        query.prepare(priv_str.arg("SELECT").arg("sugar_opt.param").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+    } else if (priv == QUANT) {
+        query.prepare(priv_str.arg("INSERT, SELECT, DELETE, UPDATE").arg("sugar_opt.param").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+        query.prepare(priv_str.arg("SELECT").arg("sugar_opt.transactions").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+        query.prepare(priv_str.arg("SELECT").arg("sugar_opt.positions").arg(user_name).arg("%"));
+        if (!query.exec()) {
+            err_func(query);
+            return false;
+        }
+    } else {
+        QMessageBox::warning(0, tr("Error"), tr("Unknown user type."));
+    }
+    if (!query.exec(QString("INSERT INTO user_info (user_name, user_priv) VALUES('%1', '%2');").arg(user_name).arg(priv == ADMIN?"Admin":(priv == BROKER?"Broker":"Quant"))))
+        err_func(query);
+    return true;
+
+}
+
 //#Sql command
 //CREATE TABLE IF NOT EXISTS positions (
 //    client_id INT NOT NULL,
@@ -278,8 +391,13 @@ map<string, PricingParam> DatabaseAccess::getParam() {
 //        volatility DOUBLE NOT NULL,
 //        yield_rate DOUBLE NOT NULL);
 
+//CREATE TABLE IF NOT EXISTS user_info (
+//        user_name VARCHAR(20) NOT NULL PRIMARY KEY,
+//        user_priv ENUM('Admin', 'Broker', 'Quant'));
+
 //INSERT INTO param (class_code, basis_delta_spread, basis_price_spread, basis_vol_spread, free_rate, multiplier, spread_type, volatility, yield_rate)
 //VALUES ('SRO', 0, 0, 0.012, 0.05, 100, 'Vol', 0.4, 0);
 
 //INSERT INTO param (class_code, basis_delta_spread, basis_price_spread, basis_vol_spread, free_rate, multiplier, spread_type, volatility, yield_rate)
 //VALUES ('0MO', 0, 0, 0.012, 0.05, 100, 'Vol', 0.4, 0);
+

@@ -24,6 +24,7 @@ OptionCalcDialog::~OptionCalcDialog()
 }
 
 void OptionCalcDialog::init() {
+<<<<<<< HEAD
     ui->classCodeComboBox->addItem("SRO");
     ui->classCodeComboBox->addItem("0MO");
     ui->optionTypeComboBox->addItem(tr("Call"));

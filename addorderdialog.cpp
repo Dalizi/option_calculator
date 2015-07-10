@@ -42,7 +42,6 @@ void addOrderDialog::accept() {
     TransactionType trans;
     QString instr_code = "OTC-";
     instr_code += ui->underlyingInstrTypeComboBox->currentText();
-    instr_code += 'O';
     instr_code += ui->callPutComboBox->currentText() == "Call"?'C':'P';
     instr_code += ui->optionTypeComboBox->currentText();
     instr_code += '-';
