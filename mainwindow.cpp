@@ -118,12 +118,12 @@ void MainWindow::updateRiskInfo() {
     auto positions = db->getAllPosition(ui->optionClassComboBox->currentText());
     for (auto p:positions) {
         auto pr = calc_server->PositionGreeks(p);
-        pnl += -calc_server->Position_PnL(p, false);
-        ret.delta += pr.delta;
-        ret.delta_f += pr.delta_f;
-        ret.gamma += pr.gamma;
-        ret.theta += pr.theta;
-        ret.vega += pr.vega;
+        pnl -= -calc_server->Position_PnL(p, false);
+        ret.delta -= pr.delta;
+        ret.delta_f -= pr.delta_f;
+        ret.gamma -= pr.gamma;
+        ret.theta -= pr.theta;
+        ret.vega -= pr.vega;
     }
     ui->deltaLineEdit->setText(QString::number(ret.delta));
     ui->deltaFLineEdit->setText(QString::number(ret.delta_f));
