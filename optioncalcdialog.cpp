@@ -24,9 +24,7 @@ OptionCalcDialog::~OptionCalcDialog()
 }
 
 void OptionCalcDialog::init() {
-<<<<<<< HEAD
-    ui->classCodeComboBox->addItem("SRO");
-    ui->classCodeComboBox->addItem("0MO");
+    ui->classCodeComboBox->addItems(db->getAllClassCode());
     ui->optionTypeComboBox->addItem(tr("Call"));
     ui->optionTypeComboBox->addItem(tr("Put"));
     ui->maturityDateEdit->setDate(QDate::currentDate());

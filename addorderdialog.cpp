@@ -21,6 +21,7 @@ addOrderDialog::~addOrderDialog()
 }
 
 void addOrderDialog::init() {
+<<<<<<< HEAD
     ui->underlyingInstrTypeComboBox->addItem("SR");
     ui->underlyingInstrTypeComboBox->addItem("0M");
     ui->callPutComboBox->addItem("Call");
@@ -33,6 +34,7 @@ void addOrderDialog::init() {
     ui->optionTypeComboBox->addItem("05");
     ui->longShortComboBox->addItem("Long");
     ui->longShortComboBox->addItem("Short");
+    ui->callPutComboBox->addItems(QStringList({"Call", "Put"}));
     ui->maturityDateEdit->setDate(QDate::currentDate());
     ui->maturityDateEdit->setMinimumDate(QDate::currentDate());
     ui->maturityDateEdit->setCalendarPopup(true);
