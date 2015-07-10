@@ -47,7 +47,7 @@ void addOrderDialog::accept() {
     trans.long_short = ui->longShortComboBox->currentText() == "Long"?LONG_ORDER:SHORT_ORDER;
     trans.underlying_code = ui->underlyingCodeLineEdit->text();
     trans.underlying_price = ui->underlyingPriceLineEdit->text().toDouble();
-    trans.knockout_price = ui->kickOutPriceLineEdit->text().toDouble();
+    trans.knockout_price = ui->knockOutPriceLineEdit->text().toDouble();
     bool isUnderlyingCodeExists;
     redis->Exists(trans.underlying_code.toStdString(), isUnderlyingCodeExists);
     if (!isUnderlyingCodeExists) {

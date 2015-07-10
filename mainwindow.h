@@ -25,6 +25,7 @@ private:
     Ui::MainWindow *ui;
     DatabaseAccess *db;
     PositionTableModel *model;
+    PositionTableModel *user_info_model;
     OptionValue *calc_server;
     OptionCalcDialog *opt_calc;
     CAccessRedis *redis;
