@@ -32,6 +32,7 @@ void transactionViewDialog::on_queryPushButton_clicked()
     if (ok) {
         QString filterText = "client_id=%1";
         model->setFilter(filterText.arg(client_id));
-    }
+    } else
+        model->setFilter("");
     model->select();
 }
