@@ -29,9 +29,10 @@ void transactionViewDialog::on_queryPushButton_clicked()
 {
     bool ok;
     auto client_id = ui->chooseClientLineEdit->text().toInt(&ok);
-    if (!ok)
-        QMessageBox::warning(this, tr("Query transaction failed"), tr("Invalid client ID."));
-    QString filterText = "client_id=%1";
-    model->setFilter(filterText.arg(client_id));
+    if (ok) {
+        QString filterText = "client_id=%1";
+        model->setFilter(filterText.arg(client_id));
+    } else
+        model->setFilter("");
     model->select();
 }
