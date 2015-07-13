@@ -288,7 +288,7 @@ bool DatabaseAccess::setPassword(const QString new_passwd, const QString old_pas
 bool DatabaseAccess::addUser(const QString user_name, const QString init_password, UserPrivilege priv) {
     QString ip_addr;
     if (priv == ADMIN)
-        ip_addr = "localhost";
+        ip_addr = "%";
     else
         ip_addr = "%";
     QString query_text = "CREATE USER '%1'@'%2' IDENTIFIED BY'%3'";
@@ -306,7 +306,7 @@ bool DatabaseAccess::addUser(const QString user_name, const QString init_passwor
         Q_ASSERT(query.exec(drop_user_str.arg(user_name).arg(ip_addr)));
     };
     if (priv == ADMIN) {
-        query.prepare(priv_str.arg("ALL").arg("sugar_opt.*").arg(user_name).arg("localhost"));
+        query.prepare(priv_str.arg("ALL").arg("sugar_opt.*").arg(user_name).arg(ip_addr));
         if (!query.exec()) {
             err_func(query);
             return false;
