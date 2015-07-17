@@ -720,7 +720,7 @@ PositionRisk OptionValue::PositionGreeks(const PositionType &Position)
                   result.delta_f=result.delta/temp_param.multiplier;
                   result.gamma = 2 * (-Position.long_short + 0.5)*Position.total_amount*bls_vanila_gamma(temp_param);
                   result.vega = 2 * (-Position.long_short + 0.5)*Position.total_amount*bls_vanila_vega(temp_param);
-                  result.theta = 2 * (-Position.long_short + 0.5)*Position.total_amount*bls_vanila_theta(temp_param);
+                  result.theta = 2 * (-Position.long_short + 0.5)*Position.total_amount*bls_vanila_theta(temp_param)/256;
 				  break;
 		}
 		}
