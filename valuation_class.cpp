@@ -137,7 +137,7 @@ double OptionValue::Maturity_Remain(string maturity_date)
 		}
 	}
     result = end - start+1;
-	if (end - start <= 5){
+
 		if (today.tm_hour >= 10 && today.tm_hour < 11){
 			result = result - 1.25 / 4.5;
 		}
@@ -154,7 +154,7 @@ double OptionValue::Maturity_Remain(string maturity_date)
 			result = result - 1;
 		}
 		else{}
-	}
+
 	return result/256;
 }
 
