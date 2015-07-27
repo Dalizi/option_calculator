@@ -13,6 +13,11 @@ enum OpenOffsetType {
     OFFSET = 1
 };
 
+enum VolType {
+    DEFAULT = 0,
+    IMPLIED = 1
+};
+
 struct TransactionType {
 
     QString instr_code = ""; //合约代码
@@ -28,6 +33,8 @@ struct TransactionType {
     double close_pnl = 0;
     double knockout_price =0;
     QString contract_no;
+    double implied_vol;
+    VolType vol_type;
 
 };
 
@@ -44,6 +51,8 @@ struct PositionType {
     QString underlying_code;
     QString contract_no;
     LongShortType long_short = LONG_ORDER; //买卖方向
+    double implied_vol;
+    VolType vol_type;
 };
 
 struct PositionRisk {
