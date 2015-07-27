@@ -38,7 +38,7 @@ public:
 	void Auto_Hedger(void *stParam);
 
     void Parameter_Setting(string param_name, PricingParam param);
-    void Parameters_Setting(map<string, PricingParam> & params);
+    void Parameters_Setting(const map<string, PricingParam> & params);
 	void Get_Parameters();
 	double Maturity_Remain(string maturity_date);
 	double Option_Valuation(PricingParam param);

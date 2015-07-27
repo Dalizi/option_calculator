@@ -4,11 +4,12 @@
 
 #include <QMessageBox>
 
-ParamSettingDialog::ParamSettingDialog(DatabaseAccess *db, QWidget *parent) :
+ParamSettingDialog::ParamSettingDialog(DatabaseAccess *db, OptionValue *calc_server, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ParamSettingDialog),
     db(db),
-    model(new PositionTableModel(this, db->getDatabase()))
+    model(new PositionTableModel(this, db->getDatabase())),
+    calc_server(calc_server)
 {
     ui->setupUi(this);
     init();
@@ -32,9 +33,12 @@ void ParamSettingDialog::init() {
 }
 
 void ParamSettingDialog::onSummitButtonClicked() {
-    if (QMessageBox::question(0, tr("Warning"), tr("Do you want to commit all changes?")) == QMessageBox::Yes)
+    if (QMessageBox::question(0, tr("Warning"), tr("Do you want to commit all changes?")) == QMessageBox::Yes) {
         if (!model->submitAll())
             QMessageBox::warning(0, tr("Submission failed"), model->lastError().text());
+    } else {
+        calc_server->Parameters_Setting(db->getParam());
+    }
 }
 
 void ParamSettingDialog::onDeleteActionTriggered() {

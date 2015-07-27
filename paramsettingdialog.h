@@ -2,6 +2,7 @@
 #define PARAMSETTINGDIALOG_H
 #include "databaseaccess.h"
 #include "positiontablemodel.h"
+#include "valuation_class.h"
 
 #include <QDialog>
 
@@ -14,13 +15,14 @@ class ParamSettingDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ParamSettingDialog(DatabaseAccess *db, QWidget *parent = 0);
+    explicit ParamSettingDialog(DatabaseAccess *db, OptionValue *calc_server, QWidget *parent = 0);
     ~ParamSettingDialog();
 
 private:
     Ui::ParamSettingDialog *ui;
     DatabaseAccess *db;
     PositionTableModel *model;
+    OptionValue *calc_server;
 
     void init();
 

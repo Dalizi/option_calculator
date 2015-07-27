@@ -172,6 +172,6 @@ void MainWindow::on_actionUser_Info_triggered() {
 }
 
 void MainWindow::on_actionParam_Setting_triggered() {
-    ParamSettingDialog psd(db);
+    ParamSettingDialog psd(db, calc_server);
     psd.exec();
 }

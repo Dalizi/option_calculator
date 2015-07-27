@@ -92,7 +92,7 @@ void OptionValue::Parameter_Setting(string param_name, PricingParam param)
 	return;
 }
 
-void OptionValue::Parameters_Setting(map<string, PricingParam> & params)
+void OptionValue::Parameters_Setting(const map<string, PricingParam> & params)
 {
 	param_lock.lock();
     Parameters=params;
