@@ -134,11 +134,11 @@ double bls_vanila_theta(PricingParam &param)
 
         if (param.option_type == 1)
 		{
-            result = -param.spot_price*Norm_cdf(d1)* param.volatility / (2 * time_sqrt) - param.free_rate*param.strike_price*exp(-param.free_rate*param.time_to_maturity)*Norm_cdf(d2);
+            result = -param.spot_price*Norm_pdf(d1)* param.volatility / (2 * time_sqrt) - param.free_rate*param.strike_price*exp(-param.free_rate*param.time_to_maturity)*Norm_cdf(d2);
 		}
         else if (param.option_type == 2)
 		{
-            result = -param.spot_price*Norm_cdf(d1)* param.volatility / (2 * time_sqrt) + param.free_rate*param.strike_price*exp(-param.free_rate*param.time_to_maturity)*Norm_cdf(-d2);
+            result = -param.spot_price*Norm_pdf(d1)* param.volatility / (2 * time_sqrt) + param.free_rate*param.strike_price*exp(-param.free_rate*param.time_to_maturity)*Norm_cdf(-d2);
 		}
 	}
 	else
