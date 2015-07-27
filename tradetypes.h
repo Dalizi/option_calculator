@@ -33,7 +33,7 @@ struct TransactionType {
     double close_pnl = 0;
     double knockout_price =0;
     QString contract_no;
-    double implied_vol;
+    double implied_vol = 0;
     VolType vol_type;
 
 };
@@ -51,7 +51,7 @@ struct PositionType {
     QString underlying_code;
     QString contract_no;
     LongShortType long_short = LONG_ORDER; //买卖方向
-    double implied_vol;
+    double implied_vol = 0;
     VolType vol_type;
 };
 

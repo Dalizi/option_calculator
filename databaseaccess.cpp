@@ -38,8 +38,8 @@ void DatabaseAccess::loadConfig(const string &configFile) {
 bool DatabaseAccess::writeTransaction(TransactionType trans) {
     QSqlQuery query(db);
     trans.contract_no = genContractNum(trans.client_id);
-    query.prepare("INSERT INTO transactions (client_id, instr_code, price, amount, long_short, open_offset, underlying_price, underlying_code, close_pnl, knockout_price, contract_no)"
-                  " VALUES(:client_id, :instr_code, :price, :amount, :long_short, :open_offset, :underlying_price, :underlying_code, :close_pnl, :knockout_price, :contract_no);");
+    query.prepare("INSERT INTO transactions (client_id, instr_code, price, amount, long_short, open_offset, underlying_price, underlying_code, close_pnl, knockout_price, contract_no, vol_type, implied_vol)"
+                  " VALUES(:client_id, :instr_code, :price, :amount, :long_short, :open_offset, :underlying_price, :underlying_code, :close_pnl, :knockout_price, :contract_no, :vol_type, :implied_vol);");
     query.bindValue(":client_id", trans.client_id);
     query.bindValue(":instr_code", trans.instr_code);
     query.bindValue(":price", trans.price);
@@ -51,6 +51,8 @@ bool DatabaseAccess::writeTransaction(TransactionType trans) {
     query.bindValue(":close_pnl", trans.close_pnl);
     query.bindValue(":knockout_price", trans.knockout_price);
     query.bindValue(":contract_no", trans.contract_no);
+    query.bindValue(":vol_type", trans.vol_type == DEFAULT? "default":"implied");
+    query.bindValue(":implied_vol", trans.implied_vol);
     if (!query.exec()) {
         QMessageBox::warning(0, "写入成交记录失败", query.lastError().text());
         return false;
@@ -113,8 +115,9 @@ bool DatabaseAccess::writePosition(const TransactionType &trans) {
 //            QMessageBox::warning(0, "更新持仓信息失败", query.lastError().text());
 //    }
     QSqlQuery query(db);
-    query.prepare("INSERT INTO positions (client_id, instr_code, average_price, total_amount, available_amount, frozen_amount, long_short, underlying_price, underlying_code, knockout_price, contract_no)"
-                  " VALUES(:client_id, :instr_code, :average_price, :total_amount, :available_amount, :frozen_amount, :long_short, :underlying_price, :underlying_code, :knockout_price, :contract_no);");
+    query.prepare("INSERT INTO positions (client_id, instr_code, average_price, total_amount, available_amount, frozen_amount, long_short, underlying_price, underlying_code, knockout_price, contract_no, vol_type, implied_vol)"
+                  " VALUES(:client_id, :instr_code, :average_price, :total_amount, :available_amount, :frozen_amount, "
+                  ":long_short, :underlying_price, :underlying_code, :knockout_price, :contract_no, :vol_type, :implied_vol);");
     query.bindValue(":client_id", trans.client_id);
     query.bindValue(":instr_code", trans.instr_code);
     query.bindValue(":long_short", trans.long_short == LONG_ORDER?"long":"short");
@@ -126,6 +129,8 @@ bool DatabaseAccess::writePosition(const TransactionType &trans) {
     query.bindValue(":underlying_price", trans.underlying_price);
     query.bindValue(":knockout_price", trans.knockout_price);
     query.bindValue(":contract_no", trans.contract_no);
+    query.bindValue(":vol_type", trans.vol_type == DEFAULT? "default":"implied");
+    query.bindValue(":implied_vol", trans.implied_vol);
     if (!query.exec()) {
         QMessageBox::warning(0, "添加持仓信息失败", query.lastError().text());
         return false;
@@ -364,7 +369,9 @@ bool DatabaseAccess::addUser(const QString user_name, const QString init_passwor
 //    occupied_margin DOUBLE NOT NULL,
 //    underlying_code VARCHAR(20) NOT NULL,
 //    knockout_price DOUBLE NOT NULL,
-//    contract_no VARCHAR(20) NOT NULL);
+//    contract_no VARCHAR(20) NOT NULL
+//    implied_vol DOUBLE,
+//    vol_type ENUM('defualt', 'implied'));
 
 //CREATE TABLE IF NOT EXISTS transactions (
 //        time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,

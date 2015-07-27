@@ -25,6 +25,8 @@ void addOrderDialog::init() {
     ui->callPutComboBox->addItems(QStringList({"Call", "Put"}));
     ui->optionTypeComboBox->addItems(QStringList({"00", "01", "02", "03", "04", "05"}));
     ui->longShortComboBox->addItems(QStringList({"Long", "Short"}));
+    ui->volTypeComboBox->addItem(tr("Default"));
+    ui->volTypeComboBox->addItem(tr("Implied"));
     ui->maturityDateEdit->setDate(QDate::currentDate());
     ui->maturityDateEdit->setMinimumDate(QDate::currentDate());
     ui->maturityDateEdit->setCalendarPopup(true);
@@ -48,10 +50,17 @@ void addOrderDialog::accept() {
     trans.underlying_code = ui->underlyingCodeLineEdit->text();
     trans.underlying_price = ui->underlyingPriceLineEdit->text().toDouble();
     trans.knockout_price = ui->knockOutPriceLineEdit->text().toDouble();
+    trans.vol_type = ui->volTypeComboBox->currentText() == "Default"? DEFAULT:IMPLIED;
+    bool ok;
+    trans.implied_vol = ui->impliedVolLineEdit->text().toDouble(&ok);
     bool isUnderlyingCodeExists;
     redis->Exists(trans.underlying_code.toStdString(), isUnderlyingCodeExists);
     if (!isUnderlyingCodeExists) {
-        QMessageBox::warning(this, "Error", "Underlying code doesn't exist.");
+        QMessageBox::warning(this, tr("Error"), tr("Underlying code doesn't exist."));
+        return;
+    }
+    if (!ok) {
+        QMessageBox::warning(this, tr("Error"), tr("Invalid input."));
         return;
     }
     if (db->writeTransaction(trans) && isUnderlyingCodeExists)

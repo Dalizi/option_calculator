@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>527</width>
-    <height>350</height>
+    <width>615</width>
+    <height>395</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -107,6 +107,26 @@
              <string>yyyy-MM-dd</string>
             </property>
            </widget>
+          </item>
+          <item row="8" column="0">
+           <widget class="QLabel" name="volTypeLabel">
+            <property name="text">
+             <string>Vol Type</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="1">
+           <widget class="QComboBox" name="volTypeComboBox"/>
+          </item>
+          <item row="9" column="0">
+           <widget class="QLabel" name="impliedVolLabel">
+            <property name="text">
+             <string>Implied Vol</string>
+            </property>
+           </widget>
+          </item>
+          <item row="9" column="1">
+           <widget class="QLineEdit" name="impliedVolLineEdit"/>
           </item>
          </layout>
         </item>
