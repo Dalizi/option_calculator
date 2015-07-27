@@ -197,6 +197,8 @@ vector<PositionType> DatabaseAccess::getAllPosition(const QString &instr_type) {
         position.underlying_code = query.value("underlying_code").toString();
         position.underlying_price = query.value("underlying_price").toDouble();
         position.knockout_price= query.value("knockout_price").toDouble();
+        position.vol_type = query.value("vol_type").toString() == "default"?DEFAULT:IMPLIED;
+        position.implied_vol = query.value("implied_vol").toDouble();
         ret.push_back(position);
     }
     return ret;
