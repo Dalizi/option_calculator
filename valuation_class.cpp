@@ -346,7 +346,7 @@ double OptionValue::Position_PnL(PositionType Position, bool isMain)
         param_lock.unlock();
 
         basic_vola=Position.implied_vol;
-        if (Position.vol_type==1)
+        if (Position.vol_type==DEFAULT)
         {
             basic_vola = temp_param.volatility;
         }
@@ -576,7 +576,7 @@ double OptionValue::Position_Quote(const PositionType &Position)
         param_lock.unlock();
 
         basic_vola=Position.implied_vol;
-        if (Position.vol_type==1)
+        if (Position.vol_type==DEFAULT)
         {
             basic_vola=temp_param.volatility;
         }
@@ -696,7 +696,7 @@ PositionRisk OptionValue::PositionGreeks(const PositionType &Position)
         param_lock.unlock();
 
         basic_vola=Position.implied_vol;
-        if (Position.vol_type==1)
+        if (Position.vol_type==DEFAULT)
         {
             basic_vola=temp_param.volatility;
         }
