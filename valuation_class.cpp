@@ -345,7 +345,12 @@ double OptionValue::Position_PnL(PositionType Position, bool isMain)
         temp_param = Parameters[temp];
         param_lock.unlock();
 
-        basic_vola = temp_param.volatility;
+        basic_vola=Position.implied_vol;
+        if (Position.vol_type==1)
+        {
+            basic_vola = temp_param.volatility;
+        }
+
         temp_param.spot_price = last_spot;
 
         temp = Position.instr_code.toStdString().substr(pos_first - 3, 3);
@@ -555,7 +560,6 @@ double OptionValue::Position_Quote(const PositionType &Position)
     float last_spot = atof(update_data["LastPrice"].c_str());
 
     double maturity, strike, basic_vola;
-    basic_vola = temp_param.volatility;
 
     if (strcmp(Position.instr_code.toStdString().substr(0, 4).c_str(), "OTC-") == 0){
         int l = Position.instr_code.toStdString().length();
@@ -571,6 +575,11 @@ double OptionValue::Position_Quote(const PositionType &Position)
         temp_param = Parameters[temp];
         param_lock.unlock();
 
+        basic_vola=Position.implied_vol;
+        if (Position.vol_type==1)
+        {
+            basic_vola=temp_param.volatility;
+        }
         temp_param.spot_price = last_spot;
 
         temp = Position.instr_code.toStdString().substr(pos_first - 3, 3);
@@ -686,7 +695,12 @@ PositionRisk OptionValue::PositionGreeks(const PositionType &Position)
         temp_param = Parameters[temp];
         param_lock.unlock();
 
-        basic_vola = temp_param.volatility;
+        basic_vola=Position.implied_vol;
+        if (Position.vol_type==1)
+        {
+            basic_vola=temp_param.volatility;
+        }
+
         temp_param.spot_price = last_spot;
 
         temp = Position.instr_code.toStdString().substr(pos_first - 3, 3);
