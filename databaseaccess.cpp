@@ -404,7 +404,7 @@ bool DatabaseAccess::addUser(const QString user_name, const QString init_passwor
 
 //CREATE TABLE IF NOT EXISTS user_info (
 //        user_name VARCHAR(20) NOT NULL PRIMARY KEY,
-//        user_priv ENUM('Admin', 'Broker', 'Quant'));
+//        user_priv ENUM('Admin', 'Broker', 'Quant', "watcher", "reviewer"));
 
 //INSERT INTO param (class_code, basis_delta_spread, basis_price_spread, basis_vol_spread, free_rate, multiplier, spread_type, volatility, yield_rate)
 //VALUES ('SRO', 0, 0, 0.012, 0.05, 100, 'Vol', 0.4, 0);
