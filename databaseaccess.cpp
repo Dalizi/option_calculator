@@ -398,6 +398,9 @@ bool DatabaseAccess::addUser(const QString user_name, const QString init_passwor
 //        spread_type VARCHAR(5) NOT NULL,
 //        volatility DOUBLE NOT NULL,
 //        yield_rate DOUBLE NOT NULL);
+//CREATE TABLE IF NOT EXISTS user_priv (
+//        user_name VARCHAR(20) NOT NULL,
+//        priv ENUM('admin', 'broker', 'quant', 'risk_manager', 'watcher') NOT NULL);
 
 //CREATE TABLE IF NOT EXISTS user_info (
 //        user_name VARCHAR(20) NOT NULL PRIMARY KEY,
