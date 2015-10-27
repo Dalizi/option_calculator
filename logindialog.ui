@@ -59,7 +59,7 @@
        <string notr="true">font: 10pt &quot;WenQuanYi Micro Hei&quot;;</string>
       </property>
       <property name="text">
-       <string>用户名：</string>
+       <string>User Name：</string>
       </property>
       <property name="textFormat">
        <enum>Qt::AutoText</enum>
@@ -84,7 +84,7 @@
        <string notr="true">font: 10pt &quot;WenQuanYi Micro Hei&quot;;</string>
       </property>
       <property name="text">
-       <string comment="测试">密码：</string>
+       <string comment="测试">Password：</string>
       </property>
       <property name="scaledContents">
        <bool>true</bool>

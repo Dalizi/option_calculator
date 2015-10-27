@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "logindialog.h"
+#include "databaseoperation.h"
 #include "valuation_class.h"
 #include "accessredis.h"
 
@@ -45,18 +46,28 @@ int initRedis(CAccessRedis *my_redis) {
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    DatabaseAccess db;
-    CAccessRedis redis;
-    getRedisInfo();
-    initRedis(&redis);
-    LoginDialog login(&db);
-    if (login.exec()){
-        OptionValue calc_server("TradeDate.txt", &redis, db.getParam());
-
-        MainWindow w(&db, &calc_server, &redis);
-        w.show();
-        return a.exec();
+    try {
+        QApplication a(argc, argv);
+        DatabaseAccess db;
+        CAccessRedis redis;
+        getRedisInfo();
+        initRedis(&redis);
+        LoginDialog login;
+        while (login.exec()){
+            try {
+                DatabaseOperation::initDatabase("mysql_config.ini");
+                DatabaseOperation::login();
+                OptionValue calc_server("TradeDate.txt", &redis, db.getParam());
+                MainWindow w(&db, &calc_server, &redis);
+                w.show();
+                return a.exec();
+            } catch (const invalid_login_info &e) {
+                QMessageBox::warning(0, "Login Failed", e.what());
+            }
+        }
+        return 0;
+    } catch (const runtime_error &e) {
+        QMessageBox::warning(0, "Unhandled Exeption", e.what());
+        return -1;
     }
-    return 0;
 }

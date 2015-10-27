@@ -7,6 +7,8 @@
 QT       += core gui sql
 CONFIG += c++11
 
+TRANSLATIONS = option_calculator.ts
+
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = option_calculator
@@ -28,7 +30,8 @@ SOURCES += main.cpp\
     adduserdialog.cpp \
     resetpassworddialog.cpp \
     paramsettingdialog.cpp \
-    addparamdialog.cpp
+    addparamdialog.cpp \
+    databaseoperation.cpp
 
 HEADERS  += mainwindow.h \
     databaseaccess.h \
@@ -44,7 +47,8 @@ HEADERS  += mainwindow.h \
     adduserdialog.h \
     resetpassworddialog.h \
     paramsettingdialog.h \
-    addparamdialog.h
+    addparamdialog.h \
+    databaseoperation.h
 
 FORMS    += mainwindow.ui \
     logindialog.ui \

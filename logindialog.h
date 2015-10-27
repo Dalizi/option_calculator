@@ -3,8 +3,6 @@
 
 #include <QDialog>
 
-#include <databaseaccess.h>
-
 namespace Ui {
 class LoginDialog;
 }
@@ -14,7 +12,7 @@ class LoginDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit LoginDialog(DatabaseAccess *db, QWidget *parent = 0);
+    explicit LoginDialog(QWidget *parent = 0);
     ~LoginDialog();
 
 public slots:
@@ -22,7 +20,6 @@ public slots:
 
 private:
     Ui::LoginDialog *ui;
-    DatabaseAccess *db;
 };
 
 #endif // LOGINDIALOG_H

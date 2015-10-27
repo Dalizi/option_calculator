@@ -236,7 +236,7 @@
      </font>
     </property>
     <property name="title">
-     <string>下单</string>
+     <string>Place Order</string>
     </property>
     <addaction name="orderPlaceAction"/>
    </widget>
@@ -247,7 +247,7 @@
      </font>
     </property>
     <property name="title">
-     <string>成交</string>
+     <string>Transactions</string>
     </property>
     <addaction name="transactionQueryAction"/>
    </widget>
@@ -258,7 +258,7 @@
      </font>
     </property>
     <property name="title">
-     <string>计算</string>
+     <string>Calculation</string>
     </property>
     <addaction name="optionPricingAction"/>
     <addaction name="actionParam_Setting"/>
@@ -270,13 +270,13 @@
      </font>
     </property>
     <property name="title">
-     <string>个人信息管理</string>
+     <string>Configuration</string>
     </property>
     <addaction name="actionReset_Password"/>
    </widget>
    <widget class="QMenu" name="menuUser_Management">
     <property name="title">
-     <string>用户管理</string>
+     <string>User Management</string>
     </property>
     <addaction name="actionAdd_User"/>
     <addaction name="actionUser_Info"/>
@@ -303,7 +303,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="orderPlaceAction">
    <property name="text">
-    <string>下单</string>
+    <string>Place Order</string>
    </property>
    <property name="font">
     <font>
@@ -333,7 +333,7 @@
   </action>
   <action name="transactionQueryAction">
    <property name="text">
-    <string>成交查询</string>
+    <string>Transaction Query</string>
    </property>
    <property name="font">
     <font>
@@ -343,7 +343,7 @@
   </action>
   <action name="optionPricingAction">
    <property name="text">
-    <string>期权报价</string>
+    <string>Option Pricing</string>
    </property>
    <property name="font">
     <font>
@@ -353,12 +353,12 @@
   </action>
   <action name="actionReset_Password">
    <property name="text">
-    <string>重置密码</string>
+    <string>Password Reset</string>
    </property>
   </action>
   <action name="actionAdd_User">
    <property name="text">
-    <string>添加用户</string>
+    <string>Add User</string>
    </property>
    <property name="font">
     <font>
@@ -368,7 +368,7 @@
   </action>
   <action name="actionUser_Info">
    <property name="text">
-    <string>用户信息</string>
+    <string>User Info</string>
    </property>
    <property name="font">
     <font>
@@ -378,7 +378,7 @@
   </action>
   <action name="actionParam_Setting">
    <property name="text">
-    <string>参数设置</string>
+    <string>Parameter Setting</string>
    </property>
   </action>
  </widget>
