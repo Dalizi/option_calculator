@@ -19,7 +19,6 @@ LoginDialog::~LoginDialog()
 void LoginDialog::accept() {
     auto username = ui->userNameLineEdit->text();
     auto password = ui->passwordLineEdit->text();
-    DatabaseOperation::setLoginInfo(username, password);
+    DatabaseOperation::SetLoginInfo(username, password);
     QDialog::accept();
-
 }

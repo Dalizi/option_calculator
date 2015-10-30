@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     resetpassworddialog.cpp \
     paramsettingdialog.cpp \
     addparamdialog.cpp \
-    databaseoperation.cpp
+    databaseoperation.cpp \
+    position.cpp
 
 HEADERS  += mainwindow.h \
     databaseaccess.h \
@@ -48,7 +49,8 @@ HEADERS  += mainwindow.h \
     resetpassworddialog.h \
     paramsettingdialog.h \
     addparamdialog.h \
-    databaseoperation.h
+    databaseoperation.h \
+    position.h
 
 FORMS    += mainwindow.ui \
     logindialog.ui \

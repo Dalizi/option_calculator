@@ -55,18 +55,18 @@ int main(int argc, char *argv[])
         LoginDialog login;
         while (login.exec()){
             try {
-                DatabaseOperation::initDatabase("mysql_config.ini");
-                DatabaseOperation::login();
+                DatabaseOperation::InitDatabase("mysql_config.ini");
+                DatabaseOperation::Login();
                 OptionValue calc_server("TradeDate.txt", &redis, db.getParam());
                 MainWindow w(&db, &calc_server, &redis);
                 w.show();
                 return a.exec();
-            } catch (const invalid_login_info &e) {
+            } catch (const InvalidLoginInfo &e) {
                 QMessageBox::warning(0, "Login Failed", e.what());
             }
         }
         return 0;
-    } catch (const runtime_error &e) {
+    } catch (runtime_error e) {
         QMessageBox::warning(0, "Unhandled Exeption", e.what());
         return -1;
     }

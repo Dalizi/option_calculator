@@ -6,31 +6,35 @@
 #include <stdexcept>
 #include <string>
 
-class invalid_login_info : public std::runtime_error {
+class InvalidLoginInfo : public std::runtime_error {
 public:
-    invalid_login_info() : std::runtime_error("Invalid username/password.") {}
+    InvalidLoginInfo() : std::runtime_error("Invalid username/password.") {}
 };
 
-class missing_config_file : public std::runtime_error {
+class MissingConfigFile : public std::runtime_error {
 public:
-    missing_config_file() : std::runtime_error("Missing database configuration file.") {}
+    MissingConfigFile() : std::runtime_error("Missing database configuration file.") {}
 };
 
 class DatabaseOperation {
 public:
-    virtual void add() = 0;
-    virtual void modify() = 0;
-    virtual void remove() = 0;
+    DatabaseOperation() = default;
+    ~DatabaseOperation() = default;
+
+    virtual void Add() = 0;
+    virtual void Modify() = 0;
+    virtual void Remove() = 0;
+    virtual void IsExist() = 0;
 
 private:
-    static QSqlDatabase db;
-    static QString _username;
-    static QString _password;
+    static QSqlDatabase db_;
+    static QString username_;
+    static QString password_;
 
 public:
-    static void initDatabase(const std::string &configFile);
-    static void setLoginInfo(const QString &username, const QString &password);
-    static void login();
+    static void InitDatabase(const std::string &configFile);
+    static void SetLoginInfo(const QString &username, const QString &password);
+    static void Login();
 };
 
 

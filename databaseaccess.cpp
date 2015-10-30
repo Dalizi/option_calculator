@@ -11,8 +11,8 @@ using namespace std;
 
 DatabaseAccess::DatabaseAccess(QObject *parent) : QObject(parent)
 {
-    db = QSqlDatabase::addDatabase("QMYSQL");
-    loadConfig("mysql_config.ini");
+    //db = QSqlDatabase::addDatabase("QMYSQL");
+    //loadConfig("mysql_config.ini");
     connect(this, SIGNAL(transactionWritten(TransactionType)), this, SLOT(writePosition(TransactionType)));
 }
 
